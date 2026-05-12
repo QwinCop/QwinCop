@@ -1889,38 +1889,80 @@ function savePerfume() {
   var isNew = !editingId;
   var id    = editingId ? editingId : nextId++;
   var data  = {
-    id:           id,
-    emoji:        selectedEmoji || '🌸',
-    photo:        pendingPhoto  || null,
-    brand:        brand,
-    name:         name,
+    id:            id,
+    emoji:         selectedEmoji || '🌸',
+    photo:         pendingPhoto  || null,
+    brand:         brand,
+    name:          name,
     concentration: fv('fConc'),
-    price:        fv('fPrice'),
-    year:         fv('fYear'),
-    nose:         fv('fNose'),
-    family:       fv('fFamily'),
-    size:         fv('fSize'),
-    notes:        csv(fv('fNotes')),
-    top:          fv('fTop'),
-    heart:        fv('fHeart'),
-    base:         fv('fBase'),
-    desc:         fv('fDesc'),
-    descLong:     fv('fDescLong'),
-    occasion:     fv('fOccasion'),
-    season:       fv('fSeason'),
-    duration:     fv('fDuration'),
-    sillage:      fv('fSillage')
+    price:         fv('fPrice'),
+    year:          fv('fYear'),
+    nose:          fv('fNose'),
+    family:        fv('fFamily'),
+    size:          fv('fSize'),
+    notes:         csv(fv('fNotes')),
+    top:           fv('fTop'),
+    heart:         fv('fHeart'),
+    base:          fv('fBase'),
+    desc:          fv('fDesc'),
+    descLong:      fv('fDescLong'),
+    occasion:      fv('fOccasion'),
+    season:        fv('fSeason'),
+    duration:      fv('fDuration'),
+    sillage:       fv('fSillage')
   };
+  // 1. Actualizar array en memoria
   if (!isNew) {
-    perfumes = perfumes.map(function(p) { return p.id === id ? data : p; });
+    for (var i = 0; i < perfumes.length; i++) {
+      if (perfumes[i].id === id) { perfumes[i] = data; break; }
+    }
   } else {
     perfumes.push(data);
   }
-  // Guardar DIRECTAMENTE en localStorage sin pasar por ninguna capa
-  try { localStorage.setItem('perfumes', JSON.stringify(perfumes)); } catch(e) {}
-  try { localStorage.setItem('qwc_nextId', String(nextId)); } catch(e) {}
-  render();
-  closeEditModal();
+  // 2. Guardar en localStorage
+  try { localStorage.setItem('perfumes',    JSON.stringify(perfumes)); } catch(e) {}
+  try { localStorage.setItem('qwc_nextId',  String(nextId)); } catch(e) {}
+  // 3. Cerrar modal PRIMERO
+  document.getElementById('editOverlay').classList.remove('open');
+  editingId = null;
+  // 4. Re-renderizar grid con el nuevo array
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  var list = typeof filteredPerfumes === 'function' ? filteredPerfumes() : perfumes;
+  if (typeof getSortedList === 'function') list = getSortedList(list);
+  list.forEach(function(p, i) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = (i * 0.05) + 's';
+    var revs = reviews[p.id] || [];
+    var avg  = revs.length ? (revs.reduce(function(a,r){return a+r.stars;},0)/revs.length).toFixed(1) : null;
+    card.innerHTML =
+      '<div class="card-actions">' +
+        '<button class="btn-icon" onclick="openEditModal(' + p.id + ',event)">' +
+          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 013.181 3.182L7.5 19.212l-4.5 1.125 1.125-4.5L16.862 3.487z"/></svg>' +
+        '</button>' +
+        '<button class="btn-icon" onclick="deletePerfume(' + p.id + ',event)">' +
+          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<p class="card-number">' + String(i+1).padStart(2,'0') + '</p>' +
+      (p.photo ? '<img class="card-photo" src="' + p.photo + '" alt="' + p.name + '"/>' : '<span class="card-emoji">' + p.emoji + '</span>') +
+      '<p class="card-brand">' + p.brand + '</p>' +
+      '<h3 class="card-name">' + p.name + '</h3>' +
+      (p.notes && p.notes.length ? '<div class="card-notes">' + p.notes.map(function(n){return '<span class="tag">'+n+'</span>';}).join('') + '</div>' : '') +
+      (p.desc ? '<p class="card-desc">' + p.desc + '</p>' : '') +
+      '<div class="card-footer">' +
+        '<span class="card-concentration">' + (p.concentration||'') + '</span>' +
+        '<span class="card-price">' + (typeof convertPrice === 'function' ? convertPrice(p.price) : p.price||'') + '</span>' +
+      '</div>' +
+      (avg ? '<div class="card-hint">★ ' + avg + ' (' + revs.length + ')</div>' : '<div class="card-hint">— Ver detalles</div>');
+    card.addEventListener('click', function(ev) {
+      if (!ev.target.closest('.card-actions')) openDetail(p.id);
+    });
+    grid.appendChild(card);
+  });
+  grid.classList.toggle('admin-mode', isAdmin);
+  // 5. Toast de confirmación
   showToast(isNew ? 'Perfume añadido' : 'Perfume actualizado', 'success');
 }
 
