@@ -1437,12 +1437,12 @@ async function cloudLoad() {
     const res = await fetch(`${FIREBASE_URL}/qwincopi.json`);
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
-    if (data?.perfumes?.length) {
+    if (data && data.perfumes && data.perfumes.length) {
       perfumes = data.perfumes;
       reviews  = data.reviews || {};
-      nextId   = Math.max(...perfumes.map(p => p.id), 0) + 1;
-      _store.setItem('perfumes', JSON.stringify(perfumes));
-      _store.setItem('reviews',  JSON.stringify(reviews));
+      nextId   = Math.max.apply(null, perfumes.map(function(p){return p.id||0;})) + 1;
+      try { localStorage.setItem('perfumes', JSON.stringify(perfumes)); } catch(e) {}
+      try { localStorage.setItem('reviews',  JSON.stringify(reviews));  } catch(e) {}
       cloudHash = dataHash();
       showSyncIndicator('ok');
       return true;
@@ -1464,8 +1464,6 @@ async function cloudLoad() {
 }
 
 async function cloudSave(force = false) {
-  // Solo Firebase si está configurado — no toca localStorage
-  if (!firebaseReady()) return;
   if (!firebaseReady()) return;
   const h = dataHash();
   if (!force && h === cloudHash) return;
@@ -1962,41 +1960,59 @@ function savePerfume() {
     grid.appendChild(card);
   });
   grid.classList.toggle('admin-mode', isAdmin);
-  // 5. Toast de confirmación
+  // 5. Resetear estado del modal
+  pendingPhoto = null;
+  selectedEmoji = EMOJIS[0];
+  // 6. Toast de confirmación
   showToast(isNew ? 'Perfume añadido' : 'Perfume actualizado', 'success');
 }
+
+// ID pendiente de confirmar eliminación
+var _pendingDeleteId = null;
 
 function deletePerfume(id, e) {
   e.stopPropagation();
   if (!isAdmin) return;
-  // Usar toast de confirmación en lugar de confirm()
-  var p = perfumes.find(function(x){return x.id===id;});
+  var p = perfumes.find(function(x){ return x.id === id; });
   var nombre = p ? (p.brand + ' — ' + p.name) : 'este perfume';
-  showDeleteConfirm(nombre, function() {
-    perfumes = perfumes.filter(function(x){return x.id!==id;});
-    delete reviews[id];
-    try {
-      _store.setItem('perfumes', JSON.stringify(perfumes));
-      _store.setItem('reviews',  JSON.stringify(reviews));
-    } catch(err) {}
-    try { if (typeof cloudSave === 'function') cloudSave(); } catch(err) {}
-    render();
-    showToast('Perfume eliminado', 'info');
-  });
-}
-
-// Mini-confirmación sin alert/confirm nativos
-function showDeleteConfirm(nombre, onConfirm) {
+  _pendingDeleteId = id;
+  // Crear barra de confirmación
   var existing = document.getElementById('deleteConfirmBar');
   if (existing) existing.remove();
   var bar = document.createElement('div');
   bar.id = 'deleteConfirmBar';
-  bar.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--cream);padding:14px 20px;z-index:3000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(26,22,18,0.3);font-family:Jost,sans-serif;font-size:11px;letter-spacing:0.15em;max-width:calc(100vw - 32px);';
-  bar.innerHTML = '<span style="opacity:0.7;">Eliminar ' + nombre + '?</span>'
-    + '<button onclick="document.getElementById(\'deleteConfirmBar\').remove(); (' + onConfirm.toString() + ')()" style="background:var(--gold);border:none;color:var(--dark);padding:7px 14px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;">Sí</button>'
-    + '<button onclick="document.getElementById(\'deleteConfirmBar\').remove()" style="background:transparent;border:1px solid rgba(247,243,238,0.2);color:rgba(247,243,238,0.6);padding:7px 14px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;">No</button>';
+  bar.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--cream);padding:14px 20px;z-index:3000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(26,22,18,0.3);font-family:Jost,sans-serif;font-size:11px;letter-spacing:0.15em;max-width:calc(100vw - 32px);border-radius:2px;';
+  var yesBtn = document.createElement('button');
+  yesBtn.textContent = 'Sí';
+  yesBtn.style.cssText = 'background:var(--gold);border:none;color:var(--dark);padding:7px 16px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;';
+  yesBtn.onclick = function() { confirmDelete(); };
+  var noBtn = document.createElement('button');
+  noBtn.textContent = 'No';
+  noBtn.style.cssText = 'background:transparent;border:1px solid rgba(247,243,238,0.3);color:rgba(247,243,238,0.6);padding:7px 16px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;';
+  noBtn.onclick = function() { bar.remove(); _pendingDeleteId = null; };
+  var label = document.createElement('span');
+  label.style.cssText = 'opacity:0.7;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+  label.textContent = '¿Eliminar ' + nombre + '?';
+  bar.appendChild(label);
+  bar.appendChild(yesBtn);
+  bar.appendChild(noBtn);
   document.body.appendChild(bar);
-  setTimeout(function() { var b = document.getElementById('deleteConfirmBar'); if(b) b.remove(); }, 5000);
+  clearTimeout(bar._t);
+  bar._t = setTimeout(function() { bar.remove(); _pendingDeleteId = null; }, 5000);
+}
+
+function confirmDelete() {
+  var bar = document.getElementById('deleteConfirmBar');
+  if (bar) bar.remove();
+  if (_pendingDeleteId === null) return;
+  var id = _pendingDeleteId;
+  _pendingDeleteId = null;
+  perfumes = perfumes.filter(function(x){ return x.id !== id; });
+  delete reviews[id];
+  try { localStorage.setItem('perfumes', JSON.stringify(perfumes)); } catch(e) {}
+  try { localStorage.setItem('reviews',  JSON.stringify(reviews));  } catch(e) {}
+  render();
+  showToast('Perfume eliminado', 'info');
 }
 
 // ── PHOTO ──
@@ -2023,13 +2039,14 @@ function removePhoto() {
 }
 
 // ── CART ──
-let cart = JSON.parse(_store.getItem('mp_cart') || '[]'); // se reemplaza en initSession si hay usuario
+var _cartRaw = null; try { _cartRaw = localStorage.getItem('mp_cart'); } catch(e) {}
+let cart = JSON.parse(_cartRaw || '[]'); // se reemplaza en initSession si hay usuario
 
 function saveCart() {
   if (currentUser) {
     saveUserCart(currentUser.email, cart);
   } else {
-    _store.setItem('mp_cart', JSON.stringify(cart));
+    try { localStorage.setItem('mp_cart', JSON.stringify(cart)); } catch(e) {}
   }
 }
 
@@ -2386,8 +2403,10 @@ const TRANSLATIONS = {
 const CURRENCY_RATES = { EUR: 1, USD: 1.08, GBP: 0.86, JPY: 163.5, CHF: 0.97, AED: 3.97 };
 const CURRENCY_SYMBOLS = { EUR: '€', USD: '$', GBP: '£', JPY: '¥', CHF: '₣', AED: 'د.إ' };
 
-let currentLang = _store.getItem('mp_lang') || 'es';
-let currentCurrency = _store.getItem('mp_currency') || 'EUR';
+var _lang = 'es'; try { _lang = localStorage.getItem('mp_lang') || 'es'; } catch(e) {}
+var _cur  = 'EUR'; try { _cur  = localStorage.getItem('mp_currency') || 'EUR'; } catch(e) {}
+let currentLang     = _lang;
+let currentCurrency = _cur;
 
 function openSettingsDrawer() {
   document.getElementById('settingsOverlay').classList.add('open');
@@ -2419,10 +2438,11 @@ function closeSettings() { closeSettingsDrawer(); }
 // ══════════════════════════════════════════════════
 
 // Caché de traducciones: { "lang:texto_original": "texto_traducido" }
-const _txCache = JSON.parse(_store.getItem('qw_tx_cache') || '{}');
+var _txRaw = null; try { _txRaw = localStorage.getItem('qw_tx_cache'); } catch(e) {}
+const _txCache = JSON.parse(_txRaw || '{}');
 
 function _saveTxCache() {
-  try { _store.setItem('qw_tx_cache', JSON.stringify(_txCache)); } catch(e) {}
+  try { localStorage.setItem('qw_tx_cache', JSON.stringify(_txCache)); } catch(e) {}
 }
 
 // Traducir un texto al idioma actual usando Claude API
@@ -2517,7 +2537,7 @@ function _descLoading() {
 // ══════════════════════════════════════════════════
 function setLanguage(lang) {
   currentLang = lang;
-  _store.setItem('mp_lang', lang);
+  try { localStorage.setItem('mp_lang', lang); } catch(e) {};
   document.querySelectorAll('#langOptions .settings-opt').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
@@ -2530,7 +2550,7 @@ function setLanguage(lang) {
 
 function setCurrency(cur) {
   currentCurrency = cur;
-  _store.setItem('mp_currency', cur);
+  try { localStorage.setItem('mp_currency', cur); } catch(e) {};
   document.querySelectorAll('#currencyOptions .settings-opt').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.currency === cur);
   });
@@ -2632,16 +2652,16 @@ let currentUser = null; // objeto { email, name, address, orders }
 
 // ── Helpers de persistencia ──
 function getUsers() {
-  try { return JSON.parse(_store.getItem(USERS_KEY) || '{}'); } catch(e) { return {}; }
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch(e) { return {}; }
 }
 function saveUsers(users) {
-  _store.setItem(USERS_KEY, JSON.stringify(users));
+  try { localStorage.setItem(USERS_KEY, JSON.stringify(users)); } catch(e) {}
 }
 function getUserCart(email) {
-  try { return JSON.parse(_store.getItem('qwc_cart_' + email) || '[]'); } catch(e) { return []; }
+  try { return JSON.parse(localStorage.getItem('qwc_cart_' + email) || '[]'); } catch(e) { return []; }
 }
 function saveUserCart(email, cartData) {
-  _store.setItem('qwc_cart_' + email, JSON.stringify(cartData));
+  try { localStorage.setItem('qwc_cart_' + email, JSON.stringify(cartData)); } catch(e) {}
 }
 
 // ── Inicialización de sesión ──
@@ -2940,7 +2960,7 @@ let selectedMessageId = null;
 // ── Cargar mensajes ──
 function loadMessages() {
   try {
-    adminMessages = JSON.parse(_store.getItem(MESSAGES_KEY) || '[]');
+    adminMessages = JSON.parse(localStorage.getItem(MESSAGES_KEY) || '[]');
   } catch(e) {
     adminMessages = [];
   }
@@ -2948,7 +2968,7 @@ function loadMessages() {
 }
 
 function saveMessages() {
-  _store.setItem(MESSAGES_KEY, JSON.stringify(adminMessages));
+  try { localStorage.setItem(MESSAGES_KEY, JSON.stringify(adminMessages)); } catch(e) {}
 }
 
 function updateMessagesBadge() {
