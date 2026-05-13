@@ -1645,38 +1645,45 @@ function render() {
     return;
   }
   list.forEach((p,i)=>{
+    // Normalizar datos por si vienen corruptos
+    if (!Array.isArray(p.notes)) p.notes = [];
+    if (!p.emoji) p.emoji = '🌸';
+    if (!p.brand) p.brand = '';
+    if (!p.name)  p.name  = '';
+
     const card=document.createElement('div');
     card.className='card'; card.style.animationDelay=(i*0.07)+'s';
     const revs=reviews[p.id]||[];
     const avg=revs.length? (revs.reduce((a,r)=>a+r.stars,0)/revs.length).toFixed(1):null;
-    card.innerHTML=`
-      <div class="card-actions">
-        <button class="btn-icon" title="Editar" onclick="openEditModal(${p.id},event)">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 013.181 3.182L7.5 19.212l-4.5 1.125 1.125-4.5L16.862 3.487z"/></svg>
-        </button>
-        <button class="btn-icon" title="Eliminar" onclick="deletePerfume(${p.id},event)">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <p class="card-number">${String(i+1).padStart(2,'0')}</p>
-
-      ${p.photo ? `<img class="card-photo" src="${p.photo}" alt="${p.name}"/>` : `<span class="card-emoji">${p.emoji}</span>`}
-      <p class="card-brand">${p.brand}</p>
-      <h3 class="card-name">${p.name}</h3>
-      ${p.notes.length?`<div class="card-notes">${p.notes.map(n=>`<span class="tag">${n}</span>`).join('')}</div>`:''}
-      ${p.desc?`<p class="card-desc" data-perfume-id="${p.id}">${p.desc}</p>`:''}
-      <div class="card-footer">
-        <span class="card-concentration">${p.concentration}</span>
-        <span class="card-price">${convertPrice(p.price)}</span>
-      </div>
-      ${avg?`<div class="card-hint">★ ${avg} (${revs.length} ${t('reviewCount', revs.length)})</div>`:`<div class="card-hint">${t('viewDetails')}</div>`}
-    `;
-    card.addEventListener('click', e=>{ if(!e.target.closest('.card-actions')) openDetail(p.id); });
-    // Traducir desc de la tarjeta si no es español
+    const notesHtml = p.notes.length ? '<div class="card-notes">'+p.notes.map(function(n){return '<span class="tag">'+n+'</span>';}).join('')+'</div>' : '';
+    const descHtml  = p.desc ? '<p class="card-desc" data-perfume-id="'+p.id+'">'+p.desc+'</p>' : '';
+    const imgHtml   = p.photo ? '<img class="card-photo" src="'+p.photo+'" alt="'+p.name+'"/>' : '<span class="card-emoji">'+p.emoji+'</span>';
+    const hintHtml  = avg ? '<div class="card-hint">&#9733; '+avg+' ('+revs.length+' '+t('reviewCount', revs.length)+')</div>' : '<div class="card-hint">'+t('viewDetails')+'</div>';
+    card.innerHTML =
+      '<div class="card-actions">'+
+        '<button class="btn-icon" title="Editar" onclick="openEditModal('+p.id+',event)">'+
+          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 013.181 3.182L7.5 19.212l-4.5 1.125 1.125-4.5L16.862 3.487z"/></svg>'+
+        '</button>'+
+        '<button class="btn-icon" title="Eliminar" onclick="deletePerfume('+p.id+',event)">'+
+          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>'+
+        '</button>'+
+      '</div>'+
+      '<p class="card-number">'+String(i+1).padStart(2,'0')+'</p>'+
+      imgHtml+
+      '<p class="card-brand">'+p.brand+'</p>'+
+      '<h3 class="card-name">'+p.name+'</h3>'+
+      notesHtml+
+      descHtml+
+      '<div class="card-footer">'+
+        '<span class="card-concentration">'+(p.concentration||'')+'</span>'+
+        '<span class="card-price">'+convertPrice(p.price)+'</span>'+
+      '</div>'+
+      hintHtml;
+    card.addEventListener('click', function(ev){ if(!ev.target.closest('.card-actions')) openDetail(p.id); });
     if (currentLang !== 'es' && p.desc) {
-      const descEl = card.querySelector('[data-perfume-id]');
+      var descEl = card.querySelector('[data-perfume-id]');
       if (descEl) {
-        translatePerfumeFields(p, currentLang).then(tx => {
+        translatePerfumeFields(p, currentLang).then(function(tx) {
           if (tx && tx.desc && descEl.isConnected) descEl.textContent = tx.desc;
         });
       }
