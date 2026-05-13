@@ -1874,24 +1874,32 @@ function openEditModal(id=null, e=null) {
 function closeEditModal() { document.getElementById('editOverlay').classList.remove('open'); }
 
 function savePerfume() {
-  var nameEl  = document.getElementById('fName');
-  var brandEl = document.getElementById('fBrand');
-  var name  = nameEl  ? nameEl.value.trim()  : '';
-  var brand = brandEl ? brandEl.value.trim() : '';
-  if (!name || !brand) {
+  var nameVal  = (document.getElementById('fName')  || {}).value || '';
+  var brandVal = (document.getElementById('fBrand') || {}).value || '';
+  nameVal  = nameVal.trim();
+  brandVal = brandVal.trim();
+  if (!nameVal || !brandVal) {
     showToast('El nombre y la marca son obligatorios', 'error');
     return;
   }
-  function fv(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
-  function csv(v) { return v ? v.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; }) : []; }
+
+  function fv(fieldId) {
+    var el = document.getElementById(fieldId);
+    return el ? el.value.trim() : '';
+  }
+  function csv(str) {
+    return str ? str.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
+  }
+
   var isNew = !editingId;
-  var id    = editingId ? editingId : nextId++;
-  var data  = {
-    id:            id,
+  var pid   = editingId || nextId++;
+
+  var data = {
+    id:            pid,
     emoji:         selectedEmoji || '🌸',
     photo:         pendingPhoto  || null,
-    brand:         brand,
-    name:          name,
+    brand:         brandVal,
+    name:          nameVal,
     concentration: fv('fConc'),
     price:         fv('fPrice'),
     year:          fv('fYear'),
@@ -1909,62 +1917,27 @@ function savePerfume() {
     duration:      fv('fDuration'),
     sillage:       fv('fSillage')
   };
-  // 1. Actualizar array en memoria
-  if (!isNew) {
-    for (var i = 0; i < perfumes.length; i++) {
-      if (perfumes[i].id === id) { perfumes[i] = data; break; }
-    }
-  } else {
+
+  if (isNew) {
     perfumes.push(data);
+  } else {
+    for (var i = 0; i < perfumes.length; i++) {
+      if (perfumes[i].id === pid) { perfumes[i] = data; break; }
+    }
   }
-  // 2. Guardar en localStorage
-  try { localStorage.setItem('perfumes',    JSON.stringify(perfumes)); } catch(e) {}
-  try { localStorage.setItem('qwc_nextId',  String(nextId)); } catch(e) {}
-  // 3. Cerrar modal PRIMERO
-  document.getElementById('editOverlay').classList.remove('open');
-  editingId = null;
-  // 4. Re-renderizar grid con el nuevo array
-  var grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  var list = typeof filteredPerfumes === 'function' ? filteredPerfumes() : perfumes;
-  if (typeof getSortedList === 'function') list = getSortedList(list);
-  list.forEach(function(p, i) {
-    var card = document.createElement('div');
-    card.className = 'card';
-    card.style.animationDelay = (i * 0.05) + 's';
-    var revs = reviews[p.id] || [];
-    var avg  = revs.length ? (revs.reduce(function(a,r){return a+r.stars;},0)/revs.length).toFixed(1) : null;
-    card.innerHTML =
-      '<div class="card-actions">' +
-        '<button class="btn-icon" onclick="openEditModal(' + p.id + ',event)">' +
-          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 013.181 3.182L7.5 19.212l-4.5 1.125 1.125-4.5L16.862 3.487z"/></svg>' +
-        '</button>' +
-        '<button class="btn-icon" onclick="deletePerfume(' + p.id + ',event)">' +
-          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' +
-        '</button>' +
-      '</div>' +
-      '<p class="card-number">' + String(i+1).padStart(2,'0') + '</p>' +
-      (p.photo ? '<img class="card-photo" src="' + p.photo + '" alt="' + p.name + '"/>' : '<span class="card-emoji">' + p.emoji + '</span>') +
-      '<p class="card-brand">' + p.brand + '</p>' +
-      '<h3 class="card-name">' + p.name + '</h3>' +
-      (p.notes && p.notes.length ? '<div class="card-notes">' + p.notes.map(function(n){return '<span class="tag">'+n+'</span>';}).join('') + '</div>' : '') +
-      (p.desc ? '<p class="card-desc">' + p.desc + '</p>' : '') +
-      '<div class="card-footer">' +
-        '<span class="card-concentration">' + (p.concentration||'') + '</span>' +
-        '<span class="card-price">' + (typeof convertPrice === 'function' ? convertPrice(p.price) : p.price||'') + '</span>' +
-      '</div>' +
-      (avg ? '<div class="card-hint">★ ' + avg + ' (' + revs.length + ')</div>' : '<div class="card-hint">— Ver detalles</div>');
-    card.addEventListener('click', function(ev) {
-      if (!ev.target.closest('.card-actions')) openDetail(p.id);
-    });
-    grid.appendChild(card);
-  });
-  grid.classList.toggle('admin-mode', isAdmin);
-  // 5. Resetear estado del modal
-  pendingPhoto = null;
+
+  try { localStorage.setItem('perfumes',   JSON.stringify(perfumes)); } catch(e) {}
+  try { localStorage.setItem('qwc_nextId', String(nextId));           } catch(e) {}
+
+  pendingPhoto  = null;
   selectedEmoji = EMOJIS[0];
-  // 6. Toast de confirmación
-  showToast(isNew ? 'Perfume añadido' : 'Perfume actualizado', 'success');
+  editingId     = null;
+
+  document.getElementById('editOverlay').classList.remove('open');
+
+  render();
+
+  showToast(isNew ? 'Perfume añadido ✓' : 'Perfume actualizado ✓', 'success');
 }
 
 // ID pendiente de confirmar eliminación
