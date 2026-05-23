@@ -1415,7 +1415,7 @@ const DEFAULTS=[
 // Pasos: console.firebase.google.com → Crear proyecto → Realtime Database
 // → Crear base de datos → Copiar URL (termina en .firebaseio.com)
 // → En Reglas pon: { "rules": { ".read": true, ".write": true } }
-const FIREBASE_URL = 'https://mi-preyecto-default-rtdb.europe-west1.firebasedatabase.app';
+const FIREBASE_URL = 'https://qwincop-c7b0c-default-rtdb.firebaseio.com';
 
 let syncTimer = null;
 let isSyncing = false;
@@ -1514,9 +1514,16 @@ const _store = {
 // ════════════════════════════════════════════
 
 var _savedPerfumes = null; var _savedReviews = null;
-try { _savedPerfumes = JSON.parse(localStorage.getItem('perfumes')); } catch(e) {}
-try { _savedReviews  = JSON.parse(localStorage.getItem('reviews'));  } catch(e) {}
-let perfumes = _savedPerfumes || DEFAULTS;
+try { _savedPerfumes = JSON.parse(localStorage.getItem('qwc_perfumes_v2')); } catch(e) {}
+try { _savedReviews  = JSON.parse(localStorage.getItem('qwc_reviews_v2'));  } catch(e) {}
+// Fallback: intentar con key antigua
+if (!_savedPerfumes) {
+  try { _savedPerfumes = JSON.parse(localStorage.getItem('perfumes')); } catch(e) {}
+}
+if (!_savedReviews) {
+  try { _savedReviews = JSON.parse(localStorage.getItem('reviews')); } catch(e) {}
+}
+let perfumes = (_savedPerfumes && _savedPerfumes.length > 0) ? _savedPerfumes : DEFAULTS;
 let reviews  = _savedReviews  || {};
 let editingId = null;
 let selectedEmoji = EMOJIS[0];
@@ -1525,8 +1532,8 @@ let nextId = _savedNextId || Math.max.apply(null, perfumes.map(function(p){retur
 let currentDetailId = null;
 
 function saveData() {
-  try { localStorage.setItem('perfumes',   JSON.stringify(perfumes)); } catch(e) {}
-  try { localStorage.setItem('reviews',    JSON.stringify(reviews));  } catch(e) {}
+  try { localStorage.setItem('qwc_perfumes_v2', JSON.stringify(perfumes)); } catch(e) {}
+  try { localStorage.setItem('qwc_reviews_v2',  JSON.stringify(reviews));  } catch(e) {}
   try { localStorage.setItem('qwc_nextId', String(nextId));           } catch(e) {}
 }
 
@@ -1933,7 +1940,7 @@ function savePerfume() {
     }
   }
 
-  try { localStorage.setItem('perfumes',   JSON.stringify(perfumes)); } catch(e) {}
+  try { localStorage.setItem('qwc_perfumes_v2', JSON.stringify(perfumes)); } catch(e) {}
   try { localStorage.setItem('qwc_nextId', String(nextId));           } catch(e) {}
 
   pendingPhoto  = null;
@@ -1989,8 +1996,8 @@ function confirmDelete() {
   _pendingDeleteId = null;
   perfumes = perfumes.filter(function(x){ return x.id !== id; });
   delete reviews[id];
-  try { localStorage.setItem('perfumes', JSON.stringify(perfumes)); } catch(e) {}
-  try { localStorage.setItem('reviews',  JSON.stringify(reviews));  } catch(e) {}
+  try { localStorage.setItem('qwc_perfumes_v2', JSON.stringify(perfumes)); } catch(e) {}
+  try { localStorage.setItem('qwc_reviews_v2',  JSON.stringify(reviews));  } catch(e) {}
   render();
   showToast('Perfume eliminado', 'info');
 }
