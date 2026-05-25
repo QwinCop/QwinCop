@@ -2331,7 +2331,13 @@ async function cloudLoad() {
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
     if (data && data.perfumes && data.perfumes.length) {
-      perfumes = data.perfumes;
+      // Fusionar: DEFAULTS siempre visibles + perfumes propios del usuario
+      var _fbDefIds = new Set(DEFAULTS.map(function(p){return p.id;}));
+      var _fbMerged = DEFAULTS.slice();
+      data.perfumes.forEach(function(p) {
+        if (!_fbDefIds.has(p.id)) _fbMerged.push(p);
+      });
+      perfumes = _fbMerged;
       reviews  = data.reviews || {};
       nextId   = Math.max.apply(null, perfumes.map(function(p){ return p.id||0; })) + 1;
       try { localStorage.setItem('qwc_perfumes_v2', JSON.stringify(perfumes)); } catch(e) {}
@@ -2412,14 +2418,24 @@ const _store = {
 var _savedPerfumes = null; var _savedReviews = null;
 try { _savedPerfumes = JSON.parse(localStorage.getItem('qwc_perfumes_v2')); } catch(e) {}
 try { _savedReviews  = JSON.parse(localStorage.getItem('qwc_reviews_v2'));  } catch(e) {}
-// Fallback: intentar con key antigua
 if (!_savedPerfumes) {
   try { _savedPerfumes = JSON.parse(localStorage.getItem('perfumes')); } catch(e) {}
 }
 if (!_savedReviews) {
   try { _savedReviews = JSON.parse(localStorage.getItem('reviews')); } catch(e) {}
 }
-let perfumes = (_savedPerfumes && _savedPerfumes.length > 0) ? _savedPerfumes : DEFAULTS;
+// FUSIONAR: si hay datos locales, añadir perfumes de DEFAULTS que no existan
+var _mergedPerfumes = DEFAULTS.slice();
+if (_savedPerfumes && _savedPerfumes.length > 0) {
+  // Añadir perfumes locales que NO estén en DEFAULTS (los creados por el usuario)
+  var _defaultIds = new Set(DEFAULTS.map(function(p){return p.id;}));
+  _savedPerfumes.forEach(function(p) {
+    if (!_defaultIds.has(p.id)) {
+      _mergedPerfumes.push(p);
+    }
+  });
+}
+let perfumes = _mergedPerfumes;
 let reviews  = _savedReviews  || {};
 let editingId = null;
 let selectedEmoji = EMOJIS[0];
