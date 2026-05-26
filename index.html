@@ -2331,9 +2331,13 @@ async function cloudLoad() {
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
     if (data && data.perfumes && data.perfumes.length) {
-      // Fusionar: DEFAULTS siempre visibles + perfumes propios del usuario
+      // Fusionar: Firebase tiene prioridad (incluye ediciones) + DEFAULTS de relleno
+      var _fbSavedMap = {};
+      data.perfumes.forEach(function(p) { _fbSavedMap[p.id] = p; });
+      var _fbMerged = DEFAULTS.map(function(d) {
+        return _fbSavedMap[d.id] ? _fbSavedMap[d.id] : d;
+      });
       var _fbDefIds = new Set(DEFAULTS.map(function(p){return p.id;}));
-      var _fbMerged = DEFAULTS.slice();
       data.perfumes.forEach(function(p) {
         if (!_fbDefIds.has(p.id)) _fbMerged.push(p);
       });
@@ -2424,16 +2428,24 @@ if (!_savedPerfumes) {
 if (!_savedReviews) {
   try { _savedReviews = JSON.parse(localStorage.getItem('reviews')); } catch(e) {}
 }
-// FUSIONAR: si hay datos locales, añadir perfumes de DEFAULTS que no existan
-var _mergedPerfumes = DEFAULTS.slice();
+// FUSIONAR: datos guardados tienen PRIORIDAD sobre DEFAULTS
+// Los DEFAULTS solo se usan si no hay version guardada de ese perfume
+var _mergedPerfumes;
 if (_savedPerfumes && _savedPerfumes.length > 0) {
-  // Añadir perfumes locales que NO estén en DEFAULTS (los creados por el usuario)
-  var _defaultIds = new Set(DEFAULTS.map(function(p){return p.id;}));
-  _savedPerfumes.forEach(function(p) {
-    if (!_defaultIds.has(p.id)) {
-      _mergedPerfumes.push(p);
-    }
+  // Construir mapa de perfumes guardados (incluye ediciones del usuario)
+  var _savedMap = {};
+  _savedPerfumes.forEach(function(p) { _savedMap[p.id] = p; });
+  // Empezar con DEFAULTS pero sustituir por version guardada si existe
+  _mergedPerfumes = DEFAULTS.map(function(d) {
+    return _savedMap[d.id] ? _savedMap[d.id] : d;
   });
+  // Añadir perfumes nuevos del usuario (IDs no presentes en DEFAULTS)
+  var _defIds = new Set(DEFAULTS.map(function(p){return p.id;}));
+  _savedPerfumes.forEach(function(p) {
+    if (!_defIds.has(p.id)) _mergedPerfumes.push(p);
+  });
+} else {
+  _mergedPerfumes = DEFAULTS.slice();
 }
 let perfumes = _mergedPerfumes;
 let reviews  = _savedReviews  || {};
