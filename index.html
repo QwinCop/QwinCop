@@ -3278,13 +3278,19 @@ if (!_savedReviews) {
 }
 // FUSIONAR: datos guardados tienen PRIORIDAD sobre DEFAULTS
 // Los DEFAULTS solo se usan si no hay version guardada de ese perfume
+var _deletedIds = new Set();
+try { _deletedIds = new Set(JSON.parse(localStorage.getItem('qwc_deleted_ids') || '[]')); } catch(e) {}
+
 var _mergedPerfumes;
 if (_savedPerfumes && _savedPerfumes.length > 0) {
   // Construir mapa de perfumes guardados (incluye ediciones del usuario)
   var _savedMap = {};
   _savedPerfumes.forEach(function(p) { _savedMap[p.id] = p; });
   // Empezar con DEFAULTS pero sustituir por version guardada si existe
-  _mergedPerfumes = DEFAULTS.map(function(d) {
+  // EXCLUIR perfumes eliminados por el usuario
+  _mergedPerfumes = DEFAULTS.filter(function(d) {
+    return !_deletedIds.has(d.id);
+  }).map(function(d) {
     return _savedMap[d.id] ? _savedMap[d.id] : d;
   });
   // Añadir perfumes nuevos del usuario (IDs no presentes en DEFAULTS)
@@ -3293,7 +3299,7 @@ if (_savedPerfumes && _savedPerfumes.length > 0) {
     if (!_defIds.has(p.id)) _mergedPerfumes.push(p);
   });
 } else {
-  _mergedPerfumes = DEFAULTS.slice();
+  _mergedPerfumes = DEFAULTS.filter(function(d) { return !_deletedIds.has(d.id); });
 }
 let perfumes = _mergedPerfumes;
 let reviews  = _savedReviews  || {};
@@ -3769,6 +3775,9 @@ function confirmDelete() {
   _pendingDeleteId = null;
   perfumes = perfumes.filter(function(x){ return x.id !== id; });
   delete reviews[id];
+  // Guardar ID eliminado para que no vuelva a aparecer en el merge con DEFAULTS
+  _deletedIds.add(id);
+  try { localStorage.setItem('qwc_deleted_ids', JSON.stringify([..._deletedIds])); } catch(e) {}
   try { localStorage.setItem('qwc_perfumes_v2', JSON.stringify(perfumes)); } catch(e) {}
   try { localStorage.setItem('qwc_reviews_v2',  JSON.stringify(reviews));  } catch(e) {}
   render();
