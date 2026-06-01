@@ -3179,15 +3179,20 @@ async function cloudLoad() {
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
     if (data && data.perfumes && data.perfumes.length) {
-      // Fusionar: Firebase tiene prioridad (incluye ediciones) + DEFAULTS de relleno
+      // Fusionar: Firebase tiene prioridad + respetar IDs eliminados
+      var _fbDeletedIds = new Set(data.deletedIds || []);
+      _fbDeletedIds.forEach(function(id) { _deletedIds.add(id); });
+      try { localStorage.setItem('qwc_deleted_ids', JSON.stringify([..._deletedIds])); } catch(e) {}
       var _fbSavedMap = {};
       data.perfumes.forEach(function(p) { _fbSavedMap[p.id] = p; });
-      var _fbMerged = DEFAULTS.map(function(d) {
+      var _fbMerged = DEFAULTS.filter(function(d) {
+        return !_deletedIds.has(d.id);
+      }).map(function(d) {
         return _fbSavedMap[d.id] ? _fbSavedMap[d.id] : d;
       });
       var _fbDefIds = new Set(DEFAULTS.map(function(p){return p.id;}));
       data.perfumes.forEach(function(p) {
-        if (!_fbDefIds.has(p.id)) _fbMerged.push(p);
+        if (!_fbDefIds.has(p.id) && !_deletedIds.has(p.id)) _fbMerged.push(p);
       });
       perfumes = _fbMerged;
       reviews  = data.reviews || {};
@@ -3205,7 +3210,7 @@ async function cloudLoad() {
       const up = await fetch(FIREBASE_URL + '/qwincopi.json', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ perfumes: perfumes, reviews: reviews })
+        body: JSON.stringify({ perfumes: perfumes, reviews: reviews, deletedIds: [..._deletedIds] })
       });
       if (up.ok) { cloudHash = dataHash(); showSyncIndicator('ok'); }
       else showSyncIndicator('offline');
@@ -3230,7 +3235,7 @@ async function cloudSave(force = false) {
       const res = await fetch(`${FIREBASE_URL}/qwincopi.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ perfumes, reviews })
+        body: JSON.stringify({ perfumes, reviews, deletedIds: [..._deletedIds] })
       });
       if (res.ok) { cloudHash = h; showSyncIndicator('ok'); }
       else showSyncIndicator('offline');
