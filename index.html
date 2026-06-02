@@ -3775,7 +3775,7 @@ function savePerfume() {
 
   if (isSampleMode) {
     // Save as sample
-    var mlVal = fv('fConc').replace(/[^0-9.]/g,'') || '2';
+    var mlVal = fv('fSize').replace(/[^0-9.]/g,'') || '2';
     var sampleData = {
       id:    editingSampleId || nextSampleId++,
       emoji: selectedEmoji || '🧪',
@@ -5035,14 +5035,75 @@ var _deletedSampleIds = new Set();
 try { _deletedSampleIds = new Set(JSON.parse(localStorage.getItem('qwc_deleted_sample_ids') || '[]')); } catch(e) {}
 
 var SAMPLE_DEFAULTS = [
-  { id:1, emoji:'🌹', photo:null, brand:'Jean Paul Gaultier', name:'Le Male EDT', ml:'2', price:'3', desc:'Lavanda, vainilla y madera. El icónico marino.', notes:['Lavanda','Vainilla','Cedro'] },
-  { id:2, emoji:'🏆', photo:null, brand:'Paco Rabanne', name:'1 Million EDT', ml:'2', price:'3', desc:'Menta, canela y cuero dorado.', notes:['Menta','Canela','Cuero'] },
-  { id:3, emoji:'⚡', photo:null, brand:'Paco Rabanne', name:'Invictus EDT', ml:'2', price:'3', desc:'Marino, laurel y ambar deportivo.', notes:['Marina','Laurel','Ambar'] },
-  { id:4, emoji:'💙', photo:null, brand:'Versace', name:'Dylan Blue EDT', ml:'2', price:'3', desc:'Acuatico, violeta y pachuli mediterráneo.', notes:['Acuatico','Violeta','Pachuli'] },
-  { id:5, emoji:'🖤', photo:null, brand:'Yves Saint Laurent', name:'Black Opium EDP', ml:'2', price:'3', desc:'Café, vainilla y flores blancas oscuras.', notes:['Cafe','Vainilla','Jazmin'] },
-  { id:6, emoji:'👑', photo:null, brand:'Creed', name:'Aventus EDP', ml:'2', price:'5', desc:'Piña ahumada, abedul y ambergris.', notes:['Pina','Abedul','Ambergris'] },
-  { id:7, emoji:'❄️', photo:null, brand:'Rasasi', name:'Hawas Ice EDP', ml:'2', price:'3', desc:'Menta helada, lavanda y cedro frío.', notes:['Menta','Lavanda','Cedro'] },
-  { id:8, emoji:'🌊', photo:null, brand:'Louis Vuitton', name:'Pacific Chill EDP', ml:'2', price:'5', desc:'Yuzu, té verde y aloe marino.', notes:['Yuzu','Te Verde','Aloe'] }
+  // ── JEAN PAUL GAULTIER ──
+  { id:1,  emoji:'🧴', photo:null, brand:'Jean Paul Gaultier', name:'Le Male EDT',           ml:'2', price:'3', desc:'Lavanda, vainilla y madera. El icónico marino.', notes:['Lavanda','Vainilla','Cedro'] },
+  { id:2,  emoji:'🖤', photo:null, brand:'Jean Paul Gaultier', name:'Le Male Parfum',         ml:'2', price:'4', desc:'Versión parfum del icónico. Más oscuro y duradero.', notes:['Lavanda','Iris','Vainilla'] },
+  { id:3,  emoji:'⚡', photo:null, brand:'Jean Paul Gaultier', name:'Ultra Male EDT',         ml:'2', price:'3', desc:'Le Male más intenso y dulce. Lavanda y pera explosivos.', notes:['Lavanda','Pera','Vainilla'] },
+  { id:4,  emoji:'🌊', photo:null, brand:'Jean Paul Gaultier', name:'Le Beau EDT',            ml:'2', price:'3', desc:'Coco, ambar y madera. Fresco y tropical.', notes:['Coco','Ambar','Madera'] },
+  { id:5,  emoji:'💛', photo:null, brand:'Jean Paul Gaultier', name:'Scandal EDT',            ml:'2', price:'3', desc:'Miel, jengibre y pachulí femenino e intenso.', notes:['Miel','Jengibre','Pachuli'] },
+  { id:6,  emoji:'🌹', photo:null, brand:'Jean Paul Gaultier', name:'La Belle EDP',           ml:'2', price:'3', desc:'Vainilla, pera y flor de naranjo. Dulce y femenino.', notes:['Vainilla','Pera','Flor de Naranjo'] },
+  // ── PACO RABANNE ──
+  { id:7,  emoji:'🏆', photo:null, brand:'Paco Rabanne', name:'1 Million EDT',                ml:'2', price:'3', desc:'Menta, canela y cuero dorado.', notes:['Menta','Canela','Cuero'] },
+  { id:8,  emoji:'🥇', photo:null, brand:'Paco Rabanne', name:'1 Million Parfum',             ml:'2', price:'4', desc:'Cuero, ambar y especias. El millón más rico.', notes:['Cuero','Ambar','Especias'] },
+  { id:9,  emoji:'👑', photo:null, brand:'Paco Rabanne', name:'1 Million Lucky EDT',          ml:'2', price:'3', desc:'Grapefruit, clementina y jengibre. El millón fresco.', notes:['Grapefruit','Clementina','Jengibre'] },
+  { id:10, emoji:'⚡', photo:null, brand:'Paco Rabanne', name:'Invictus EDT',                 ml:'2', price:'3', desc:'Marino, laurel y ambar deportivo.', notes:['Marina','Laurel','Ambar'] },
+  { id:11, emoji:'🏆', photo:null, brand:'Paco Rabanne', name:'Invictus Legend EDP',          ml:'2', price:'4', desc:'Pomelo, laurel y vetiver. El Invictus más maduro.', notes:['Pomelo','Laurel','Vetiver'] },
+  { id:12, emoji:'💎', photo:null, brand:'Paco Rabanne', name:'Invictus Platinum EDP',        ml:'2', price:'4', desc:'El Invictus más refinado y elegante.', notes:['Cardamomo','Laurel','Madera'] },
+  { id:13, emoji:'🌙', photo:null, brand:'Paco Rabanne', name:'Invictus Onyx EDP',            ml:'2', price:'4', desc:'El lado oscuro de Invictus. Especiado y poderoso.', notes:['Pimienta','Cardamomo','Ambar'] },
+  { id:14, emoji:'🤖', photo:null, brand:'Paco Rabanne', name:'Phantom EDT',                  ml:'2', price:'3', desc:'Lavanda, limón y vainilla. El robot del perfume.', notes:['Lavanda','Limon','Vainilla'] },
+  { id:15, emoji:'🌸', photo:null, brand:'Paco Rabanne', name:'Fame EDP',                     ml:'2', price:'3', desc:'Mango, flor de naranjo y ambar. Femenino y frutal.', notes:['Mango','Flor de Naranjo','Ambar'] },
+  { id:16, emoji:'💰', photo:null, brand:'Paco Rabanne', name:'Lady Million EDT',              ml:'2', price:'3', desc:'Frambuesa, gardenia y miel. El millón femenino.', notes:['Frambuesa','Gardenia','Miel'] },
+  { id:17, emoji:'🥇', photo:null, brand:'Paco Rabanne', name:'Lady Million EDP',              ml:'2', price:'4', desc:'Gardenia y miel más oscura e intensa.', notes:['Gardenia','Miel','Cuero'] },
+  // ── VERSACE ──
+  { id:18, emoji:'💚', photo:null, brand:'Versace', name:'Eros EDT',                          ml:'2', price:'3', desc:'Menta, manzana y vainilla. El dios griego del amor.', notes:['Menta','Manzana','Vainilla'] },
+  { id:19, emoji:'⚡', photo:null, brand:'Versace', name:'Eros Parfum',                       ml:'2', price:'4', desc:'Eros en concentración máxima. Profundo y duradero.', notes:['Cardamomo','Iris','Vainilla Bourbon'] },
+  { id:20, emoji:'🔥', photo:null, brand:'Versace', name:'Eros Flame EDP',                    ml:'2', price:'3', desc:'Naranja sanguina, pimienta y madera. Ardiente.', notes:['Naranja','Pimienta','Madera'] },
+  { id:21, emoji:'💙', photo:null, brand:'Versace', name:'Dylan Blue EDT',                    ml:'2', price:'3', desc:'Acuático, violeta y pachulí mediterráneo.', notes:['Acuatico','Violeta','Pachuli'] },
+  { id:22, emoji:'💎', photo:null, brand:'Versace', name:'Bright Crystal EDT',                ml:'2', price:'3', desc:'Granada, yuzu y magnolia. Fresco y femenino.', notes:['Granada','Yuzu','Magnolia'] },
+  { id:23, emoji:'💎', photo:null, brand:'Versace', name:'Bright Crystal Absolu EDP',         ml:'2', price:'3', desc:'Bright Crystal más rico y cálido.', notes:['Granada','Peonia','Ambar'] },
+  { id:24, emoji:'💛', photo:null, brand:'Versace', name:'Yellow Diamond EDT',                ml:'2', price:'3', desc:'Pera, neroli y freesia. Alegre y luminoso.', notes:['Pera','Neroli','Freesia'] },
+  { id:25, emoji:'🌊', photo:null, brand:'Versace', name:'Pour Homme EDT',                    ml:'2', price:'3', desc:'Cítrico marino con cedro y musgo. Clásico masculino.', notes:['Citrico','Cedro','Musgo'] },
+  // ── YSL ──
+  { id:26, emoji:'🖤', photo:null, brand:'Yves Saint Laurent', name:'Black Opium EDP',        ml:'2', price:'3', desc:'Café, vainilla y flores blancas oscuras.', notes:['Cafe','Vainilla','Jazmin'] },
+  { id:27, emoji:'🌸', photo:null, brand:'Yves Saint Laurent', name:'Libre EDP',              ml:'2', price:'4', desc:'Lavanda y flor de naranjo. Libertad femenina.', notes:['Lavanda','Flor de Naranjo','Vainilla'] },
+  { id:28, emoji:'💙', photo:null, brand:'Yves Saint Laurent', name:'MYSLF EDP',              ml:'2', price:'4', desc:'Bergamota, lavanda y cedro. El nuevo masculino de YSL.', notes:['Bergamota','Lavanda','Cedro'] },
+  { id:29, emoji:'💛', photo:null, brand:'Yves Saint Laurent', name:'Y EDP',                  ml:'2', price:'3', desc:'Manzana, bergamota y salvia. Elegante y fresco.', notes:['Manzana','Bergamota','Salvia'] },
+  { id:30, emoji:'🌹', photo:null, brand:'Yves Saint Laurent', name:'Mon Paris EDP',          ml:'2', price:'3', desc:'Fresa, peonia y pachulí. El amor parisino.', notes:['Fresa','Peonia','Pachuli'] },
+  { id:31, emoji:'🍓', photo:null, brand:'Yves Saint Laurent', name:'Black Opium Over Red EDP', ml:'2', price:'3', desc:'Café y frutas rojas explosivos.', notes:['Cafe','Fresa','Frambuesa'] },
+  { id:32, emoji:'🌹', photo:null, brand:'Yves Saint Laurent', name:'Libre Le Parfum',        ml:'2', price:'5', desc:'La versión parfum de Libre. Máxima intensidad.', notes:['Lavanda','Jazmin','Vainilla'] },
+  // ── VALENTINO ──
+  { id:33, emoji:'🌸', photo:null, brand:'Valentino', name:'Voce Viva EDP',                   ml:'2', price:'4', desc:'Bergamota, flor de naranjo y vainilla. Opera floral.', notes:['Bergamota','Flor de Naranjo','Vainilla'] },
+  { id:34, emoji:'🔴', photo:null, brand:'Valentino', name:'Donna Born in Roma EDP',          ml:'2', price:'4', desc:'Iris, vainilla y madera. El alma de Roma.', notes:['Iris','Vainilla','Madera'] },
+  { id:35, emoji:'🖤', photo:null, brand:'Valentino', name:'Uomo EDT',                        ml:'2', price:'3', desc:'Iris, cuero y cedro. El caballero italiano.', notes:['Iris','Cuero','Cedro'] },
+  // ── XERJOFF ──
+  { id:36, emoji:'🌹', photo:null, brand:'Xerjoff', name:'Naxos EDP',                         ml:'2', price:'6', desc:'Lavanda, miel y tabaco. El rey de Xerjoff.', notes:['Lavanda','Miel','Tabaco'] },
+  { id:37, emoji:'🍊', photo:null, brand:'Xerjoff', name:'Erba Pura EDP',                     ml:'2', price:'6', desc:'Naranja siciliana, frutas y almizcle solar.', notes:['Naranja','Frutas','Almizcle'] },
+  { id:38, emoji:'🌸', photo:null, brand:'Xerjoff', name:'Alexandria II EDP',                  ml:'2', price:'6', desc:'Oud, rosa y especias. Lujo oriental puro.', notes:['Oud','Rosa','Especias'] },
+  { id:39, emoji:'🌊', photo:null, brand:'Xerjoff', name:'40 Knots EDP',                      ml:'2', price:'6', desc:'Marino, madera y almizcle. El mediterráneo en lujo.', notes:['Marina','Madera','Almizcle'] },
+  // ── AFNAN ──
+  { id:40, emoji:'⏰', photo:null, brand:'Afnan', name:'9pm EDP',                             ml:'2', price:'2', desc:'Canela, vainilla y oud. El dupe de Eros de noche.', notes:['Canela','Vainilla','Oud'] },
+  { id:41, emoji:'🌅', photo:null, brand:'Afnan', name:'9am EDP',                             ml:'2', price:'2', desc:'Frutal floral femenino. El lado diurno de Afnan.', notes:['Frutal','Floral','Almizcle'] },
+  { id:42, emoji:'👑', photo:null, brand:'Afnan', name:'Supremacy Silver EDP',                ml:'2', price:'2', desc:'Cítrico marino inspirado en Acqua di Gio.', notes:['Citrico','Marina','Almizcle'] },
+  { id:43, emoji:'🖤', photo:null, brand:'Afnan', name:'Supremacy Noir EDP',                  ml:'2', price:'2', desc:'Oud, rosa y madera. El hermano oscuro de Supremacy.', notes:['Oud','Rosa','Madera'] },
+  // ── RASASI ──
+  { id:44, emoji:'❄️', photo:null, brand:'Rasasi', name:'Hawas Ice EDP',                      ml:'2', price:'3', desc:'Menta helada, lavanda y cedro frío.', notes:['Menta','Lavanda','Cedro'] },
+  // ── CREED ──
+  { id:45, emoji:'👑', photo:null, brand:'Creed', name:'Aventus EDP',                         ml:'2', price:'6', desc:'Piña ahumada, abedul y ambergris. El rey.', notes:['Pina','Abedul','Ambergris'] },
+  { id:46, emoji:'🌿', photo:null, brand:'Creed', name:'Green Irish Tweed EDP',               ml:'2', price:'6', desc:'Verbena, menta verde e iris. El clásico eterno.', notes:['Verbena','Menta','Iris'] },
+  { id:47, emoji:'🏔️', photo:null, brand:'Creed', name:'Silver Mountain Water EDP',          ml:'2', price:'6', desc:'Bergamota, té verde y ambergris alpino.', notes:['Bergamota','Te Verde','Ambergris'] },
+  { id:48, emoji:'🔥', photo:null, brand:'Creed', name:'Viking EDP',                         ml:'2', price:'6', desc:'Pimienta rosa, lavanda y sándalo. Audaz y conquistador.', notes:['Pimienta','Lavanda','Sandalo'] },
+  { id:49, emoji:'🌸', photo:null, brand:'Creed', name:'Aventus For Her EDP',                ml:'2', price:'6', desc:'Piña, rosa turca y ambergris. La conquistadora.', notes:['Pina','Rosa','Ambergris'] },
+  // ── LOUIS VUITTON ──
+  { id:50, emoji:'🌊', photo:null, brand:'Louis Vuitton', name:'Pacific Chill EDP',           ml:'2', price:'6', desc:'Yuzu, té verde y aloe marino. El Pacífico en lujo.', notes:['Yuzu','Te Verde','Aloe'] },
+  { id:51, emoji:'🌿', photo:null, brand:'Louis Vuitton', name:'Sur La Route EDP',            ml:'2', price:'6', desc:'Cítrico, lavanda y cedro. La carretera abierta.', notes:['Citrico','Lavanda','Cedro'] },
+  { id:52, emoji:'🔥', photo:null, brand:'Louis Vuitton', name:'Ombre Nomade EDP',            ml:'2', price:'7', desc:'Oud de Laos, incienso y ámbar. Obra maestra.', notes:['Oud','Incienso','Ambar'] },
+  { id:53, emoji:'🌸', photo:null, brand:'Louis Vuitton', name:'Attrape-Rêves EDP',           ml:'2', price:'6', desc:'Grosella, lichi y rosa. Floral de ensueño.', notes:['Grosella','Lichi','Rosa'] },
+  { id:54, emoji:'🌙', photo:null, brand:'Louis Vuitton', name:'Nouveau Monde EDP',           ml:'2', price:'6', desc:'Café, tabaco y sándalo. Exploración de lujo.', notes:['Cafe','Tabaco','Sandalo'] },
+  // ── FRENCH AVENUE ──
+  { id:55, emoji:'🔥', photo:null, brand:'French Avenue', name:'Vulcan Feu EDP',              ml:'2', price:'3', desc:'Picante, ambar y madera. El volcán de fuego.', notes:['Pimienta','Ambar','Madera'] },
+  { id:56, emoji:'🏖️', photo:null, brand:'French Avenue', name:'Vulcan Sable EDP',           ml:'2', price:'3', desc:'Arena, sal y madera. El volcán costero.', notes:['Arena','Sal','Madera'] },
+  { id:57, emoji:'🍇', photo:null, brand:'French Avenue', name:'Vulcan Baie EDP',             ml:'2', price:'3', desc:'Bayas, vodka y fresa. Frutal y adictivo.', notes:['Mora','Frambuesa','Fresa'] },
+  { id:58, emoji:'🌙', photo:null, brand:'French Avenue', name:'Vulcan Nuit EDP',             ml:'2', price:'3', desc:'Rosa, oud y pachulí. El volcán de noche.', notes:['Rosa','Oud','Pachuli'] }
 ];
 
 var _mergedSamples;
@@ -5203,32 +5264,40 @@ function openSampleEditModal(id, e) {
   if (!isAdmin) return;
   editingSampleId = id || null;
   var p = id ? samples.find(function(x){return x.id===id;}) : null;
-  // Reuse the edit modal but adapt fields
   var overlay = document.getElementById('editOverlay');
-  var modal = document.getElementById('editModal');
+  var modal   = document.getElementById('editModal');
   if (!overlay || !modal) return;
-  // Fill fields
-  document.getElementById('editBrand').value = p ? (p.brand||'') : '';
-  document.getElementById('editName').value  = p ? (p.name||'')  : '';
-  document.getElementById('editConc').value  = p ? (p.ml ? p.ml+'ml Muestra' : '2ml Muestra') : '2ml Muestra';
-  document.getElementById('editPrice').value = p ? (p.price||'') : '';
-  document.getElementById('editYear').value  = p ? (p.year||'')  : '';
-  document.getElementById('editNose').value  = p ? (p.nose||'')  : '';
-  document.getElementById('editFamily').value = p ? (p.family||'') : '';
-  document.getElementById('editOccasion').value = p ? (p.occasion||'') : '';
-  document.getElementById('editSeason').value = p ? (p.season||'') : '';
-  document.getElementById('editDuration').value = p ? (p.duration||'') : '';
-  document.getElementById('editSillage').value = p ? (p.sillage||'') : '';
-  document.getElementById('editNotes').value = p ? (p.notes||[]).join(', ') : '';
-  document.getElementById('editTop').value   = p ? (p.top||'')   : '';
-  document.getElementById('editHeart').value = p ? (p.heart||'') : '';
-  document.getElementById('editBase').value  = p ? (p.base||'')  : '';
-  document.getElementById('editDesc').value  = p ? (p.desc||'')  : '';
-  document.getElementById('editDescLong').value = p ? (p.descLong||'') : '';
-  // Mark modal as sample mode
+  // Clear all fields first
+  ['fBrand','fName','fPrice','fYear','fNose','fFamily','fSize','fNotes','fTop','fHeart','fBase','fDesc','fDescLong','fOccasion','fSeason','fDuration','fSillage'].forEach(function(fid){
+    var el = document.getElementById(fid);
+    if (el) el.value = '';
+  });
+  // Fill with sample data using correct field IDs
+  var fv = function(fid, val) { var el = document.getElementById(fid); if (el) el.value = val || ''; };
+  fv('fBrand',   p ? p.brand : '');
+  fv('fName',    p ? p.name  : '');
+  fv('fPrice',   p ? p.price : '');
+  fv('fNotes',   p ? (p.notes||[]).join(', ') : '');
+  fv('fDesc',    p ? p.desc  : '');
+  fv('fSize',    p ? (p.ml||'2') + 'ml' : '2ml');
+  // fConc is a select — set to first option or match
+  var fConc = document.getElementById('fConc');
+  if (fConc) fConc.selectedIndex = 0;
+  // Emoji
+  selectedEmoji = (p && p.emoji) ? p.emoji : '🧪';
+  document.querySelectorAll('.emoji-btn').forEach(function(b){ b.classList.toggle('selected', b.textContent === selectedEmoji); });
+  // Photo
+  pendingPhoto = (p && p.photo) ? p.photo : null;
+  var pw = document.getElementById('photoPreviewWrap');
+  var pp = document.getElementById('photoPreview');
+  if (pendingPhoto && pw && pp) { pw.style.display='block'; pp.src=pendingPhoto; }
+  else if (pw) pw.style.display='none';
+  // Mark modal as sample mode and update title
   modal.dataset.sampleMode = '1';
-  var title = modal.querySelector('.edit-title');
-  if (title) title.textContent = id ? 'Editar muestra' : 'Nueva muestra';
+  var titleEl = document.getElementById('editModalTitle');
+  var subEl   = document.getElementById('editModalSub');
+  if (titleEl) titleEl.textContent = id ? 'Editar muestra' : 'Nueva muestra';
+  if (subEl)   subEl.textContent   = id ? 'Modifica los detalles' : 'Añade una muestra de prueba';
   overlay.classList.add('open');
 }
 
