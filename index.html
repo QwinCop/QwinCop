@@ -1452,6 +1452,7 @@ var editingSampleId = null;
 var samples = [];
 var _deletedSampleIds = new Set();
 var nextSampleId = 100;
+var _editingSamples = false; // cuando true, el modal opera sobre samples[]
 
 // ── AUTH ──
 function handleAdminToggle() {
@@ -3792,12 +3793,15 @@ function closeDetail() {
 function openEditModal(id=null, e=null) {
   if(e) e.stopPropagation();
   if(!isAdmin) return;
-  // If we're in samples section and no specific ID given, open sample modal
-  if (currentSection === 'samples' && !id) { openSampleEditModal(null, e); return; }
-  const p=id? perfumes.find(x=>x.id===id):null;
-  editingId=p?p.id:null;
-  document.getElementById('editModalTitle').textContent=p?'Editar Perfume':'Nuevo Perfume';
-  document.getElementById('editModalSub').textContent=p?'Modifica los detalles':'Añade a tu colección';
+  // When in samples section, operate on samples[]
+  _editingSamples = (currentSection === 'samples');
+  var _arr = _editingSamples ? samples : perfumes;
+  const p = id ? _arr.find(x=>x.id===id) : null;
+  editingId = p ? p.id : null;
+  var label = _editingSamples ? (p ? 'Editar muestra' : 'Nueva muestra') : (p ? 'Editar Perfume' : 'Nuevo Perfume');
+  var sublabel = _editingSamples ? (p ? 'Modifica los detalles' : 'Añade una muestra') : (p ? 'Modifica los detalles' : 'Añade a tu colección');
+  document.getElementById('editModalTitle').textContent = label;
+  document.getElementById('editModalSub').textContent = sublabel;
   const fields={fBrand:'brand',fName:'name',fConc:'concentration',fPrice:'price',fYear:'year',fNose:'nose',fFamily:'family',fSize:'size',fNotes:'notes',fTop:'top',fHeart:'heart',fBase:'base',fDesc:'desc',fDescLong:'descLong',fOccasion:'occasion',fSeason:'season',fDuration:'duration',fSillage:'sillage'};
   Object.entries(fields).forEach(([id,key])=>{
     const el=document.getElementById(id);
@@ -3816,6 +3820,8 @@ function openEditModal(id=null, e=null) {
   document.getElementById('editOverlay').classList.add('open');
 }
 function closeEditModal() {
+  _editingSamples = false;
+  editingId = null;
   var modal = document.getElementById('editModal');
   if (modal) modal.dataset.sampleMode = '';
   document.getElementById('editOverlay').classList.remove('open');
@@ -3839,19 +3845,16 @@ function savePerfume() {
     return str ? str.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
   }
 
-  // Leer sampleMode ANTES de limpiar el modal
-  var modal = document.getElementById('editModal');
-  var isSampleMode = modal && modal.dataset.sampleMode === '1';
-
-  // Capturar emoji y photo ANTES de limpiarlos
-  var capturedEmoji = selectedEmoji || (isSampleMode ? '🧪' : '🌸');
+  // Capturar emoji y photo
+  var capturedEmoji = selectedEmoji || EMOJIS[0];
   var capturedPhoto = pendingPhoto || null;
+  var modal = document.getElementById('editModal');
 
-  if (isSampleMode) {
+  if (_editingSamples) {
     // ── GUARDAR COMO MUESTRA ──
     var mlVal = fv('fSize').replace(/[^0-9.]/g,'') || '2';
     var sampleData = {
-      id:    editingSampleId || nextSampleId++,
+      id:    editingId || nextSampleId++,
       emoji: capturedEmoji,
       photo: capturedPhoto,
       brand: brandVal,
@@ -3860,9 +3863,13 @@ function savePerfume() {
       price: fv('fPrice'),
       year:  fv('fYear'),
       notes: csv(fv('fNotes')),
-      desc:  fv('fDesc')
+      desc:  fv('fDesc'),
+      concentration: fv('fConc'),
+      top: fv('fTop'), heart: fv('fHeart'), base: fv('fBase'),
+      family: fv('fFamily'), occasion: fv('fOccasion'), season: fv('fSeason'),
+      duration: fv('fDuration'), sillage: fv('fSillage'), descLong: fv('fDescLong')
     };
-    var isSampleNew = !editingSampleId;
+    var isSampleNew = !editingId;
     if (isSampleNew) {
       samples.push(sampleData);
     } else {
@@ -3870,12 +3877,8 @@ function savePerfume() {
         if (samples[j].id === sampleData.id) { samples[j] = sampleData; break; }
       }
     }
-    // Limpiar estado
-    editingSampleId = null;
-    modal.dataset.sampleMode = '';
-    pendingPhoto  = null;
-    selectedEmoji = EMOJIS[0];
-    editingId     = null;
+    pendingPhoto = null; selectedEmoji = EMOJIS[0]; editingId = null; _editingSamples = false;
+    if (modal) modal.dataset.sampleMode = '';
     document.getElementById('editOverlay').classList.remove('open');
     saveSamples();
     renderSamples();
@@ -5298,31 +5301,41 @@ function renderSamples() {
   if (!grid) return;
   grid.innerHTML = '';
   grid.classList.toggle('admin-mode', isAdmin);
-  var list = samples;
+
+  var list = samples.slice();
   if (searchSampleQuery) {
     list = list.filter(function(p) {
       return (p.name+' '+p.brand+' '+(p.notes||[]).join(' ')).toLowerCase().includes(searchSampleQuery);
     });
   }
   var countEl = document.getElementById('searchCountSamples');
-  if (countEl) countEl.textContent = searchSampleQuery && list.length < samples.length ? list.length + ' de ' + samples.length : '';
+  if (countEl) countEl.textContent = searchSampleQuery && list.length < samples.length ? list.length + ' de ' + samples.length + ' muestras' : '';
+
   if (!samples.length) {
-    grid.innerHTML = '<div class="empty"><div class="empty-icon">🧪</div><h3>Sin muestras</h3><p>Añade perfumes de prueba desde el admin</p></div>';
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🧪</div><h3>Sin muestras</h3><p>Añade muestras desde el admin</p></div>';
     return;
   }
   if (!list.length) {
-    grid.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Prueba con otro término</p></div>';
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><h3>Sin resultados</h3></div>';
     return;
   }
+
   list.forEach(function(p, i) {
     var card = document.createElement('div');
     card.className = 'card';
-    card.style.animationDelay = (i * 0.07) + 's';
-    var imgHtml = p.photo ? '<img class="card-photo" src="'+p.photo+'" alt="'+p.name+'"/>' : '<span class="card-emoji">'+(p.emoji||'🧪')+'</span>';
-    var notesHtml = (p.notes||[]).length ? '<div class="card-notes">'+(p.notes||[]).map(function(n){return '<span class="tag">'+n+'</span>';}).join('')+'</div>' : '';
+    card.style.animationDelay = (i * 0.05) + 's';
+
+    var imgHtml = p.photo
+      ? '<img class="card-photo" src="'+p.photo+'" alt="'+p.name+'"/>'
+      : '<span class="card-emoji">'+(p.emoji||'🧪')+'</span>';
+
+    var notesHtml = (p.notes||[]).length
+      ? '<div class="card-notes">'+(p.notes||[]).map(function(n){ return '<span class="tag">'+n+'</span>'; }).join('')+'</div>'
+      : '';
+
     card.innerHTML =
       '<div class="card-actions">'+
-        '<button class="btn-icon" title="Editar" onclick="openSampleEditModal('+p.id+',event)">'+
+        '<button class="btn-icon" title="Editar" onclick="openSampleEdit('+p.id+',event)">'+
           '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 013.181 3.182L7.5 19.212l-4.5 1.125 1.125-4.5L16.862 3.487z"/></svg>'+
         '</button>'+
         '<button class="btn-icon" title="Eliminar" onclick="deleteSample('+p.id+',event)">'+
@@ -5331,7 +5344,7 @@ function renderSamples() {
       '</div>'+
       '<p class="card-number">'+String(i+1).padStart(2,'0')+'</p>'+
       imgHtml+
-      '<div class="card-ml">'+( p.ml||'2')+'ml · Prueba</div>'+
+      '<div class="card-ml">'+(p.ml||'2')+'ml · Prueba</div>'+
       '<p class="card-brand">'+(p.brand||'')+'</p>'+
       '<h3 class="card-name">'+(p.name||'')+'</h3>'+
       notesHtml+
@@ -5341,30 +5354,39 @@ function renderSamples() {
         '<span class="card-price">'+convertPrice(p.price)+'</span>'+
       '</div>'+
       '<div class="card-hint">Muestra de prueba</div>';
-    // WhatsApp on click
+
     card.addEventListener('click', function(ev) {
       if (ev.target.closest('.card-actions')) return;
-      var msg = encodeURIComponent('Hola! Me interesa la muestra de prueba: ' + p.brand + ' - ' + p.name + ' (' + (p.ml||'2') + 'ml) por ' + convertPrice(p.price));
+      var msg = encodeURIComponent('Hola! Me interesa la muestra: ' + p.brand + ' - ' + p.name + ' (' + (p.ml||'2') + 'ml) por ' + convertPrice(p.price));
       window.open('https://wa.me/34641097492?text=' + msg, '_blank');
     });
     grid.appendChild(card);
   });
 }
 
-// ── Sample admin: delete ──
+// ── openSampleEdit: reutiliza el mismo modal que los perfumes normales ──
+function openSampleEdit(id, e) {
+  if (e) e.stopPropagation();
+  if (!isAdmin) return;
+  // Temporalmente apuntamos perfumes al array de samples para que openEditModal lo use
+  _editingSamples = true;
+  openEditModal(id, e);
+}
+
+// ── deleteSample: igual que deletePerfume pero sobre samples ──
 var _pendingSampleDeleteId = null;
 function deleteSample(id, e) {
   if (e) e.stopPropagation();
   if (!isAdmin) return;
   var p = samples.find(function(x){ return x.id === id; });
-  var nombre = p ? (p.brand + ' — ' + p.name) : 'esta muestra';
+  var nombre = p ? p.brand + ' — ' + p.name : 'esta muestra';
   _pendingSampleDeleteId = id;
-  _pendingDeleteId = null; // asegurar que el otro pending está limpio
+  _pendingDeleteId = null;
   var existing = document.getElementById('deleteConfirmBar');
   if (existing) existing.remove();
   var bar = document.createElement('div');
   bar.id = 'deleteConfirmBar';
-  bar.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--cream);padding:14px 20px;z-index:3000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(26,22,18,0.3);font-family:Jost,sans-serif;font-size:11px;letter-spacing:0.15em;max-width:calc(100vw - 32px);border-radius:2px;';
+  bar.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--cream);padding:14px 20px;z-index:3000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(26,22,18,0.3);font-family:Jost,sans-serif;font-size:11px;letter-spacing:0.15em;max-width:calc(100vw - 32px);';
   var yesBtn = document.createElement('button');
   yesBtn.textContent = 'Sí';
   yesBtn.style.cssText = 'background:var(--gold);border:none;color:var(--dark);padding:7px 16px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;';
@@ -5373,16 +5395,14 @@ function deleteSample(id, e) {
   noBtn.textContent = 'No';
   noBtn.style.cssText = 'background:transparent;border:1px solid rgba(247,243,238,0.3);color:rgba(247,243,238,0.6);padding:7px 16px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;';
   noBtn.onclick = function() { bar.remove(); _pendingSampleDeleteId = null; };
-  var label = document.createElement('span');
-  label.style.cssText = 'opacity:0.7;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-  label.textContent = '¿Eliminar ' + nombre + '?';
-  bar.appendChild(label);
-  bar.appendChild(yesBtn);
-  bar.appendChild(noBtn);
+  var lbl = document.createElement('span');
+  lbl.style.cssText = 'opacity:0.7;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+  lbl.textContent = '¿Eliminar ' + nombre + '?';
+  bar.appendChild(lbl); bar.appendChild(yesBtn); bar.appendChild(noBtn);
   document.body.appendChild(bar);
-  clearTimeout(bar._t);
-  bar._t = setTimeout(function() { bar.remove(); _pendingSampleDeleteId = null; }, 5000);
+  bar._t = setTimeout(function(){ bar.remove(); _pendingSampleDeleteId = null; }, 5000);
 }
+
 function confirmDeleteSample() {
   var bar = document.getElementById('deleteConfirmBar');
   if (bar) bar.remove();
@@ -5396,52 +5416,6 @@ function confirmDeleteSample() {
   renderSamples();
   showToast('Muestra eliminada', 'info');
 }
-
-// ── Sample admin: edit/add modal ──
-function openSampleEditModal(id, e) {
-  if (e) e.stopPropagation();
-  if (!isAdmin) return;
-  editingSampleId = id || null;
-  var p = id ? samples.find(function(x){return x.id===id;}) : null;
-  var overlay = document.getElementById('editOverlay');
-  var modal   = document.getElementById('editModal');
-  if (!overlay || !modal) return;
-  // Clear all fields first
-  ['fBrand','fName','fPrice','fYear','fNose','fFamily','fSize','fNotes','fTop','fHeart','fBase','fDesc','fDescLong','fOccasion','fSeason','fDuration','fSillage'].forEach(function(fid){
-    var el = document.getElementById(fid);
-    if (el) el.value = '';
-  });
-  // Fill with sample data using correct field IDs
-  var fv = function(fid, val) { var el = document.getElementById(fid); if (el) el.value = val || ''; };
-  fv('fBrand',   p ? p.brand : '');
-  fv('fName',    p ? p.name  : '');
-  fv('fPrice',   p ? p.price : '');
-  fv('fNotes',   p ? (p.notes||[]).join(', ') : '');
-  fv('fDesc',    p ? p.desc  : '');
-  fv('fSize',    p ? (p.ml||'2') + 'ml' : '2ml');
-  // fConc is a select — set to first option or match
-  var fConc = document.getElementById('fConc');
-  if (fConc) fConc.selectedIndex = 0;
-  // Emoji
-  selectedEmoji = (p && p.emoji) ? p.emoji : '🧪';
-  document.querySelectorAll('.emoji-btn').forEach(function(b){ b.classList.toggle('selected', b.textContent === selectedEmoji); });
-  // Photo
-  pendingPhoto = (p && p.photo) ? p.photo : null;
-  var pw = document.getElementById('photoPreviewWrap');
-  var pp = document.getElementById('photoPreview');
-  if (pendingPhoto && pw && pp) { pw.style.display='block'; pp.src=pendingPhoto; }
-  else if (pw) pw.style.display='none';
-  // Mark modal as sample mode and update title
-  modal.dataset.sampleMode = '1';
-  var titleEl = document.getElementById('editModalTitle');
-  var subEl   = document.getElementById('editModalSub');
-  if (titleEl) titleEl.textContent = id ? 'Editar muestra' : 'Nueva muestra';
-  if (subEl)   subEl.textContent   = id ? 'Modifica los detalles' : 'Añade una muestra de prueba';
-  overlay.classList.add('open');
-}
-
-// Patch savePerfume to handle sample mode
-var _origSavePerfume = null;
 
 </script>
 
