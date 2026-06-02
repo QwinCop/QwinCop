@@ -1138,6 +1138,16 @@
     }
     .fab-add:hover .fab-add-label { opacity: 1; }
 
+
+    /* ── SECTION TABS (top) ── */
+    .section-tabs { display:flex; justify-content:center; gap:0; margin:0 auto 32px; max-width:360px; padding:0 24px; }
+    .section-tab { flex:1; padding:11px 0; font-family:'Jost',sans-serif; font-weight:300; font-size:11px; letter-spacing:0.25em; text-transform:uppercase; text-align:center; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.25s; position:relative; }
+    .section-tab:first-child { border-right:none; }
+    .section-tab.active { background:var(--dark); color:var(--cream); border-color:var(--dark); }
+    .section-tab:not(.active):hover { border-color:var(--gold); color:var(--gold); }
+
+    /* ── SAMPLE TAG on cards ── */
+    .card-ml { display:inline-block; background:var(--gold); color:#fff; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; padding:2px 7px; margin-bottom:6px; font-weight:400; }
   </style>
 </head>
 <body>
@@ -1151,7 +1161,26 @@
 </header>
 
 
+<!-- ── SECTION TABS ── -->
+<div class="section-tabs">
+  <button class="section-tab active" id="tabCatalog" onclick="switchSection('catalog')">Catálogo</button>
+  <button class="section-tab" id="tabSamples" onclick="switchSection('samples')">Prueba</button>
+</div>
 
+<!-- ── SAMPLES SECTION (hidden by default) ── -->
+<div id="samplesSection" style="display:none;">
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></span>
+      <input type="text" id="searchInputSamples" placeholder="Buscar muestra…" oninput="onSearchSamples(this.value)"/>
+      <button class="search-clear" id="searchClearSamples" onclick="clearSearchSamples()">✕</button>
+    </div>
+  </div>
+  <p class="search-count" id="searchCountSamples"></p>
+  <div class="grid" id="gridSamples"></div>
+</div>
+
+<div class="catalog-section" id="catalogSection">
 <div class="toolbar" style="display:none;">
   <button class="btn-add" id="btnAdd" onclick="openEditModal()"><span>+ Añadir Perfume</span></button>
   <div class="admin-badge" id="adminBadge"><div class="admin-dot"></div> Modo Admin</div>
@@ -1211,6 +1240,7 @@
 <p class="search-count" id="searchCount"></p>
 
 <div class="grid" id="grid"></div>
+</div><!-- /catalogSection -->
 <footer>
   <div style="font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);opacity:0.5;margin-bottom:6px;">QwinCop</div>
   <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);opacity:0.4;">Tu colección personal de fragancias · Collection Privée</div>
@@ -3649,6 +3679,8 @@ function closeDetail() {
 function openEditModal(id=null, e=null) {
   if(e) e.stopPropagation();
   if(!isAdmin) return;
+  // If we're in samples section and no specific ID given, open sample modal
+  if (currentSection === 'samples' && !id) { openSampleEditModal(null, e); return; }
   const p=id? perfumes.find(x=>x.id===id):null;
   editingId=p?p.id:null;
   document.getElementById('editModalTitle').textContent=p?'Editar Perfume':'Nuevo Perfume';
@@ -3666,9 +3698,15 @@ function openEditModal(id=null, e=null) {
   const pp = document.getElementById('photoPreview');
   if(pendingPhoto && pw && pp){ pw.style.display='block'; pp.src=pendingPhoto; }
   else if(pw){ pw.style.display='none'; }
+  var modal = document.getElementById('editModal');
+  if (modal) modal.dataset.sampleMode = '';
   document.getElementById('editOverlay').classList.add('open');
 }
-function closeEditModal() { document.getElementById('editOverlay').classList.remove('open'); }
+function closeEditModal() {
+  var modal = document.getElementById('editModal');
+  if (modal) modal.dataset.sampleMode = '';
+  document.getElementById('editOverlay').classList.remove('open');
+}
 
 function savePerfume() {
   var nameVal  = (document.getElementById('fName')  || {}).value || '';
@@ -3732,8 +3770,43 @@ function savePerfume() {
 
   document.getElementById('editOverlay').classList.remove('open');
 
-  render();
+  var modal = document.getElementById('editModal');
+  var isSampleMode = modal && modal.dataset.sampleMode === '1';
 
+  if (isSampleMode) {
+    // Save as sample
+    var mlVal = fv('fConc').replace(/[^0-9.]/g,'') || '2';
+    var sampleData = {
+      id:    editingSampleId || nextSampleId++,
+      emoji: selectedEmoji || '🧪',
+      photo: pendingPhoto || null,
+      brand: brandVal,
+      name:  nameVal,
+      ml:    mlVal,
+      price: fv('fPrice'),
+      year:  fv('fYear'),
+      notes: csv(fv('fNotes')),
+      desc:  fv('fDesc')
+    };
+    var isSampleNew = !editingSampleId;
+    if (isSampleNew) {
+      samples.push(sampleData);
+    } else {
+      for (var j = 0; j < samples.length; j++) {
+        if (samples[j].id === sampleData.id) { samples[j] = sampleData; break; }
+      }
+    }
+    editingSampleId = null;
+    if (modal) modal.dataset.sampleMode = '';
+    pendingPhoto = null; selectedEmoji = EMOJIS[0]; editingId = null;
+    document.getElementById('editOverlay').classList.remove('open');
+    saveSamples();
+    renderSamples();
+    showToast(isSampleNew ? 'Muestra añadida ✓' : 'Muestra actualizada ✓', 'success');
+    return;
+  }
+
+  render();
   showToast(isNew ? 'Perfume añadido ✓' : 'Perfume actualizado ✓', 'success');
   try { cloudSave(true); } catch(e) {}
 }
@@ -4949,6 +5022,218 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('navHome').classList.add('active');
   // Settings drawer se gestiona vía openSettingsDrawer()
 });
+
+
+
+// ════════════════════════════════════════════
+// ── PERFUMES DE PRUEBA (MUESTRAS) ──
+// ════════════════════════════════════════════
+
+var _savedSamples = null;
+try { _savedSamples = JSON.parse(localStorage.getItem('qwc_samples_v1')); } catch(e) {}
+var _deletedSampleIds = new Set();
+try { _deletedSampleIds = new Set(JSON.parse(localStorage.getItem('qwc_deleted_sample_ids') || '[]')); } catch(e) {}
+
+var SAMPLE_DEFAULTS = [
+  { id:1, emoji:'🌹', photo:null, brand:'Jean Paul Gaultier', name:'Le Male EDT', ml:'2', price:'3', desc:'Lavanda, vainilla y madera. El icónico marino.', notes:['Lavanda','Vainilla','Cedro'] },
+  { id:2, emoji:'🏆', photo:null, brand:'Paco Rabanne', name:'1 Million EDT', ml:'2', price:'3', desc:'Menta, canela y cuero dorado.', notes:['Menta','Canela','Cuero'] },
+  { id:3, emoji:'⚡', photo:null, brand:'Paco Rabanne', name:'Invictus EDT', ml:'2', price:'3', desc:'Marino, laurel y ambar deportivo.', notes:['Marina','Laurel','Ambar'] },
+  { id:4, emoji:'💙', photo:null, brand:'Versace', name:'Dylan Blue EDT', ml:'2', price:'3', desc:'Acuatico, violeta y pachuli mediterráneo.', notes:['Acuatico','Violeta','Pachuli'] },
+  { id:5, emoji:'🖤', photo:null, brand:'Yves Saint Laurent', name:'Black Opium EDP', ml:'2', price:'3', desc:'Café, vainilla y flores blancas oscuras.', notes:['Cafe','Vainilla','Jazmin'] },
+  { id:6, emoji:'👑', photo:null, brand:'Creed', name:'Aventus EDP', ml:'2', price:'5', desc:'Piña ahumada, abedul y ambergris.', notes:['Pina','Abedul','Ambergris'] },
+  { id:7, emoji:'❄️', photo:null, brand:'Rasasi', name:'Hawas Ice EDP', ml:'2', price:'3', desc:'Menta helada, lavanda y cedro frío.', notes:['Menta','Lavanda','Cedro'] },
+  { id:8, emoji:'🌊', photo:null, brand:'Louis Vuitton', name:'Pacific Chill EDP', ml:'2', price:'5', desc:'Yuzu, té verde y aloe marino.', notes:['Yuzu','Te Verde','Aloe'] }
+];
+
+var _mergedSamples;
+if (_savedSamples && _savedSamples.length > 0) {
+  var _savedSampleMap = {};
+  _savedSamples.forEach(function(p) { _savedSampleMap[p.id] = p; });
+  _mergedSamples = SAMPLE_DEFAULTS.filter(function(d) {
+    return !_deletedSampleIds.has(d.id);
+  }).map(function(d) {
+    return _savedSampleMap[d.id] ? _savedSampleMap[d.id] : d;
+  });
+  var _defSampleIds = new Set(SAMPLE_DEFAULTS.map(function(p){return p.id;}));
+  _savedSamples.forEach(function(p) {
+    if (!_defSampleIds.has(p.id) && !_deletedSampleIds.has(p.id)) _mergedSamples.push(p);
+  });
+} else {
+  _mergedSamples = SAMPLE_DEFAULTS.filter(function(d) { return !_deletedSampleIds.has(d.id); });
+}
+
+let samples = _mergedSamples;
+let nextSampleId = Math.max.apply(null, [0].concat(SAMPLE_DEFAULTS.map(function(p){return p.id||0;}))) + 1;
+try { var _sns = parseInt(localStorage.getItem('qwc_next_sample_id')||'0'); if (_sns > nextSampleId) nextSampleId = _sns; } catch(e) {}
+let editingSampleId = null;
+let currentSection = 'catalog';
+let searchSampleQuery = '';
+
+function saveSamples() {
+  try { localStorage.setItem('qwc_samples_v1', JSON.stringify(samples)); } catch(e) {}
+  try { localStorage.setItem('qwc_next_sample_id', String(nextSampleId)); } catch(e) {}
+  try { cloudSaveSamples(); } catch(e) {}
+}
+
+function cloudSaveSamples() {
+  if (!firebaseReady()) return;
+  fetch(FIREBASE_URL + '/qwincopi_samples.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ samples: samples, deletedSampleIds: [..._deletedSampleIds] })
+  }).catch(function(){});
+}
+
+function switchSection(section) {
+  currentSection = section;
+  document.getElementById('tabCatalog').classList.toggle('active', section === 'catalog');
+  document.getElementById('tabSamples').classList.toggle('active', section === 'samples');
+  document.getElementById('catalogSection').style.display = section === 'catalog' ? '' : 'none';
+  document.getElementById('samplesSection').style.display = section === 'samples' ? '' : 'none';
+  if (section === 'samples') renderSamples();
+  // FAB: show only for admin
+  var fab = document.getElementById('fabAddPerfume');
+  if (fab) fab.style.display = isAdmin ? 'flex' : 'none';
+}
+
+function onSearchSamples(q) {
+  searchSampleQuery = q.toLowerCase().trim();
+  var btn = document.getElementById('searchClearSamples');
+  if (btn) btn.classList.toggle('visible', !!searchSampleQuery);
+  renderSamples();
+}
+function clearSearchSamples() {
+  searchSampleQuery = '';
+  document.getElementById('searchInputSamples').value = '';
+  var btn = document.getElementById('searchClearSamples');
+  if (btn) btn.classList.remove('visible');
+  renderSamples();
+}
+
+function renderSamples() {
+  var grid = document.getElementById('gridSamples');
+  if (!grid) return;
+  grid.innerHTML = '';
+  grid.classList.toggle('admin-mode', isAdmin);
+  var list = samples;
+  if (searchSampleQuery) {
+    list = list.filter(function(p) {
+      return (p.name+' '+p.brand+' '+(p.notes||[]).join(' ')).toLowerCase().includes(searchSampleQuery);
+    });
+  }
+  var countEl = document.getElementById('searchCountSamples');
+  if (countEl) countEl.textContent = searchSampleQuery && list.length < samples.length ? list.length + ' de ' + samples.length : '';
+  if (!samples.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🧪</div><h3>Sin muestras</h3><p>Añade perfumes de prueba desde el admin</p></div>';
+    return;
+  }
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Prueba con otro término</p></div>';
+    return;
+  }
+  list.forEach(function(p, i) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = (i * 0.07) + 's';
+    var imgHtml = p.photo ? '<img class="card-photo" src="'+p.photo+'" alt="'+p.name+'"/>' : '<span class="card-emoji">'+(p.emoji||'🧪')+'</span>';
+    var notesHtml = (p.notes||[]).length ? '<div class="card-notes">'+(p.notes||[]).map(function(n){return '<span class="tag">'+n+'</span>';}).join('')+'</div>' : '';
+    card.innerHTML =
+      '<div class="card-actions">'+
+        '<button class="btn-icon" title="Editar" onclick="openSampleEditModal('+p.id+',event)">'+
+          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 013.181 3.182L7.5 19.212l-4.5 1.125 1.125-4.5L16.862 3.487z"/></svg>'+
+        '</button>'+
+        '<button class="btn-icon" title="Eliminar" onclick="deleteSample('+p.id+',event)">'+
+          '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>'+
+        '</button>'+
+      '</div>'+
+      '<p class="card-number">'+String(i+1).padStart(2,'0')+'</p>'+
+      imgHtml+
+      '<div class="card-ml">'+( p.ml||'2')+'ml · Prueba</div>'+
+      '<p class="card-brand">'+(p.brand||'')+'</p>'+
+      '<h3 class="card-name">'+(p.name||'')+'</h3>'+
+      notesHtml+
+      (p.desc ? '<p class="card-desc">'+p.desc+'</p>' : '')+
+      '<div class="card-footer">'+
+        '<span class="card-concentration">'+(p.ml||'2')+' ml</span>'+
+        '<span class="card-price">'+convertPrice(p.price)+'</span>'+
+      '</div>'+
+      '<div class="card-hint">Muestra de prueba</div>';
+    // WhatsApp on click
+    card.addEventListener('click', function(ev) {
+      if (ev.target.closest('.card-actions')) return;
+      var msg = encodeURIComponent('Hola! Me interesa la muestra de prueba: ' + p.brand + ' - ' + p.name + ' (' + (p.ml||'2') + 'ml) por ' + convertPrice(p.price));
+      window.open('https://wa.me/34641097492?text=' + msg, '_blank');
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ── Sample admin: delete ──
+var _pendingSampleDeleteId = null;
+function deleteSample(id, e) {
+  if (e) e.stopPropagation();
+  if (!isAdmin) return;
+  _pendingSampleDeleteId = id;
+  var existing = document.getElementById('deleteConfirmBar');
+  if (existing) existing.remove();
+  var bar = document.createElement('div');
+  bar.id = 'deleteConfirmBar';
+  bar.className = 'delete-confirm-bar';
+  bar.innerHTML = '<span>¿Eliminar esta muestra?</span><button onclick="confirmDeleteSample()">Sí, eliminar</button><button onclick="cancelDelete()">Cancelar</button>';
+  document.body.appendChild(bar);
+  setTimeout(function() { bar.classList.add('visible'); }, 10);
+}
+function confirmDeleteSample() {
+  var bar = document.getElementById('deleteConfirmBar');
+  if (bar) bar.remove();
+  if (_pendingSampleDeleteId === null) return;
+  var id = _pendingSampleDeleteId;
+  _pendingSampleDeleteId = null;
+  samples = samples.filter(function(x){ return x.id !== id; });
+  _deletedSampleIds.add(id);
+  try { localStorage.setItem('qwc_deleted_sample_ids', JSON.stringify([..._deletedSampleIds])); } catch(e) {}
+  saveSamples();
+  renderSamples();
+  showToast('Muestra eliminada', 'info');
+}
+
+// ── Sample admin: edit/add modal ──
+function openSampleEditModal(id, e) {
+  if (e) e.stopPropagation();
+  if (!isAdmin) return;
+  editingSampleId = id || null;
+  var p = id ? samples.find(function(x){return x.id===id;}) : null;
+  // Reuse the edit modal but adapt fields
+  var overlay = document.getElementById('editOverlay');
+  var modal = document.getElementById('editModal');
+  if (!overlay || !modal) return;
+  // Fill fields
+  document.getElementById('editBrand').value = p ? (p.brand||'') : '';
+  document.getElementById('editName').value  = p ? (p.name||'')  : '';
+  document.getElementById('editConc').value  = p ? (p.ml ? p.ml+'ml Muestra' : '2ml Muestra') : '2ml Muestra';
+  document.getElementById('editPrice').value = p ? (p.price||'') : '';
+  document.getElementById('editYear').value  = p ? (p.year||'')  : '';
+  document.getElementById('editNose').value  = p ? (p.nose||'')  : '';
+  document.getElementById('editFamily').value = p ? (p.family||'') : '';
+  document.getElementById('editOccasion').value = p ? (p.occasion||'') : '';
+  document.getElementById('editSeason').value = p ? (p.season||'') : '';
+  document.getElementById('editDuration').value = p ? (p.duration||'') : '';
+  document.getElementById('editSillage').value = p ? (p.sillage||'') : '';
+  document.getElementById('editNotes').value = p ? (p.notes||[]).join(', ') : '';
+  document.getElementById('editTop').value   = p ? (p.top||'')   : '';
+  document.getElementById('editHeart').value = p ? (p.heart||'') : '';
+  document.getElementById('editBase').value  = p ? (p.base||'')  : '';
+  document.getElementById('editDesc').value  = p ? (p.desc||'')  : '';
+  document.getElementById('editDescLong').value = p ? (p.descLong||'') : '';
+  // Mark modal as sample mode
+  modal.dataset.sampleMode = '1';
+  var title = modal.querySelector('.edit-title');
+  if (title) title.textContent = id ? 'Editar muestra' : 'Nueva muestra';
+  overlay.classList.add('open');
+}
+
+// Patch savePerfume to handle sample mode
+var _origSavePerfume = null;
 
 </script>
 
