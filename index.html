@@ -1140,14 +1140,91 @@
 
 
     /* ── SECTION TABS (top) ── */
-    .section-tabs { display:flex; justify-content:center; gap:0; margin:0 auto 32px; max-width:360px; padding:0 24px; }
-    .section-tab { flex:1; padding:11px 0; font-family:'Jost',sans-serif; font-weight:300; font-size:11px; letter-spacing:0.25em; text-transform:uppercase; text-align:center; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.25s; position:relative; }
+    .section-tabs {
+      display:flex; justify-content:center; gap:0;
+      margin:0 auto 48px; max-width:340px; padding:0 24px;
+      position:relative;
+    }
+    .section-tabs::before, .section-tabs::after {
+      content:''; position:absolute; top:50%; transform:translateY(-50%);
+      width:32px; height:1px; background:var(--border);
+    }
+    .section-tabs::before { left:0; }
+    .section-tabs::after  { right:0; }
+    .section-tab {
+      flex:1; padding:12px 0;
+      font-family:'Jost',sans-serif; font-weight:300;
+      font-size:10px; letter-spacing:0.3em; text-transform:uppercase;
+      text-align:center; cursor:pointer;
+      border:1px solid var(--border); background:transparent;
+      color:var(--muted); transition:all 0.3s;
+      position:relative; overflow:hidden;
+    }
     .section-tab:first-child { border-right:none; }
-    .section-tab.active { background:var(--dark); color:var(--cream); border-color:var(--dark); }
+    .section-tab.active {
+      background:var(--dark); color:var(--cream); border-color:var(--dark);
+    }
+    .section-tab.active::after {
+      content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+      width:24px; height:1px; background:var(--gold);
+    }
     .section-tab:not(.active):hover { border-color:var(--gold); color:var(--gold); }
 
+    /* ── SAMPLES HERO BANNER ── */
+    .samples-hero {
+      text-align:center; padding:40px 32px 32px;
+      border-bottom:1px solid var(--border);
+      margin-bottom:40px; position:relative;
+    }
+    .samples-hero::before {
+      content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+      width:1px; height:40px; background:linear-gradient(to bottom, transparent, var(--gold));
+    }
+    .samples-hero-label {
+      font-size:9px; letter-spacing:0.5em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:12px; display:block;
+    }
+    .samples-hero-title {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:28px; color:var(--dark); margin-bottom:8px; line-height:1.2;
+    }
+    .samples-hero-title em { color:var(--gold); font-style:italic; }
+    .samples-hero-sub {
+      font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--muted); opacity:0.7; line-height:1.7;
+    }
+    .samples-hero-ornament {
+      display:flex; align-items:center; justify-content:center;
+      gap:12px; margin-top:20px; opacity:0.4;
+    }
+    .samples-hero-ornament span { width:32px; height:1px; background:var(--gold); display:block; }
+    .samples-hero-ornament i { font-style:normal; font-size:10px; letter-spacing:0.3em; color:var(--gold); }
+
+    /* ── SAMPLES INTRO PILLS ── */
+    .samples-pills {
+      display:flex; justify-content:center; gap:8px;
+      flex-wrap:wrap; padding:0 24px; margin-bottom:40px;
+    }
+    .samples-pill {
+      font-size:9px; letter-spacing:0.25em; text-transform:uppercase;
+      color:var(--muted); border:1px solid var(--border);
+      padding:6px 14px; background:transparent;
+    }
+
     /* ── SAMPLE TAG on cards ── */
-    .card-ml { display:inline-block; background:var(--gold); color:#fff; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; padding:2px 7px; margin-bottom:6px; font-weight:400; }
+    .card-ml {
+      display:inline-block; background:var(--dark); color:var(--gold);
+      font-size:8px; letter-spacing:0.2em; text-transform:uppercase;
+      padding:3px 9px; margin-bottom:8px; font-weight:300;
+      border:1px solid var(--gold); opacity:0.85;
+    }
+
+    /* ── SAMPLES SECTION DIVIDER ── */
+    .samples-brand-divider {
+      text-align:center; padding:20px 0 8px;
+      font-size:9px; letter-spacing:0.4em; text-transform:uppercase;
+      color:var(--gold); opacity:0.5; grid-column:1/-1;
+    }
   </style>
 </head>
 <body>
@@ -1162,6 +1239,9 @@
 
 
 <!-- ── SECTION TABS ── -->
+<div style="text-align:center; margin-bottom:16px;">
+  <span style="font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);opacity:0.6;">Selecciona colección</span>
+</div>
 <div class="section-tabs">
   <button class="section-tab active" id="tabCatalog" onclick="switchSection('catalog')">Catálogo</button>
   <button class="section-tab" id="tabSamples" onclick="switchSection('samples')">Prueba</button>
@@ -1169,15 +1249,38 @@
 
 <!-- ── SAMPLES SECTION (hidden by default) ── -->
 <div id="samplesSection" style="display:none;">
+
+  <!-- Hero decorativo -->
+  <div class="samples-hero">
+    <span class="samples-hero-label">Descubre antes de invertir</span>
+    <h2 class="samples-hero-title">Muestras de <em>Prueba</em></h2>
+    <p class="samples-hero-sub">
+      2 ml · Fragancias de lujo<br>desde €2
+    </p>
+    <div class="samples-hero-ornament">
+      <span></span><i>✦</i><span></span>
+    </div>
+  </div>
+
+  <!-- Pills informativos -->
+  <div class="samples-pills">
+    <div class="samples-pill">Envío incluido</div>
+    <div class="samples-pill">Sin compromiso</div>
+    <div class="samples-pill">Alta perfumería</div>
+  </div>
+
+  <!-- Buscador -->
   <div class="search-wrap">
     <div class="search-inner">
       <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></span>
-      <input type="text" id="searchInputSamples" placeholder="Buscar muestra…" oninput="onSearchSamples(this.value)"/>
+      <input type="text" id="searchInputSamples" placeholder="Buscar por nombre o marca…" oninput="onSearchSamples(this.value)"/>
       <button class="search-clear" id="searchClearSamples" onclick="clearSearchSamples()">✕</button>
     </div>
   </div>
   <p class="search-count" id="searchCountSamples"></p>
+
   <div class="grid" id="gridSamples"></div>
+
 </div>
 
 <div class="catalog-section" id="catalogSection">
@@ -1343,6 +1446,13 @@ const PASSWORD = '1234689';
 const SESSION_KEY = 'mp_admin';
 let isAdmin = sessionStorage.getItem(SESSION_KEY) === '1';
 
+// ── EARLY DECLARATIONS (needed by functions defined before samples block) ──
+var currentSection = 'catalog';
+var editingSampleId = null;
+var samples = [];
+var _deletedSampleIds = new Set();
+var nextSampleId = 100;
+
 // ── AUTH ──
 function handleAdminToggle() {
   if (isAdmin) { isAdmin=false; sessionStorage.removeItem(SESSION_KEY); applyAdminUI(); }
@@ -1367,23 +1477,26 @@ function checkPassword() {
 }
 function applyAdminUI() {
   const grid = document.getElementById('grid');
-  // Botón añadir legacy (dentro del toolbar oculto)
+  const gridSamples = document.getElementById('gridSamples');
   const btnAdd = document.getElementById('btnAdd');
   if (btnAdd) btnAdd.classList.toggle('visible', isAdmin);
   const adminBadge = document.getElementById('adminBadge');
   if (adminBadge) adminBadge.classList.toggle('visible', isAdmin);
-  grid.classList.toggle('admin-mode', isAdmin);
-  // Botón en el drawer de ajustes
+  if (grid) grid.classList.toggle('admin-mode', isAdmin);
+  if (gridSamples) gridSamples.classList.toggle('admin-mode', isAdmin);
   const addWrap = document.getElementById('adminAddWrap');
   if (addWrap) addWrap.style.display = isAdmin ? 'block' : 'none';
-  // Botón flotante en la pantalla principal
   const fabAdd = document.getElementById('fabAddPerfume');
   if (fabAdd) fabAdd.style.display = isAdmin ? 'flex' : 'none';
-  // Settings drawer admin button
   const sBtn = document.getElementById('settingsAdminBtn');
   const sDot = document.getElementById('settingsAdminDot');
   if (sBtn) { sBtn.textContent = isAdmin ? 'Salir' : 'Acceder'; sBtn.classList.toggle('active', isAdmin); }
   if (sDot) sDot.classList.toggle('visible', isAdmin);
+  // Re-render la seccion activa para mostrar/ocultar botones de admin
+  if (typeof currentSection !== 'undefined') {
+    if (currentSection === 'samples' && typeof renderSamples === 'function') renderSamples();
+    else if (typeof render === 'function') render();
+  }
 }
 
 // ── DATA ──
@@ -3726,13 +3839,58 @@ function savePerfume() {
     return str ? str.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
   }
 
+  // Leer sampleMode ANTES de limpiar el modal
+  var modal = document.getElementById('editModal');
+  var isSampleMode = modal && modal.dataset.sampleMode === '1';
+
+  // Capturar emoji y photo ANTES de limpiarlos
+  var capturedEmoji = selectedEmoji || (isSampleMode ? '🧪' : '🌸');
+  var capturedPhoto = pendingPhoto || null;
+
+  if (isSampleMode) {
+    // ── GUARDAR COMO MUESTRA ──
+    var mlVal = fv('fSize').replace(/[^0-9.]/g,'') || '2';
+    var sampleData = {
+      id:    editingSampleId || nextSampleId++,
+      emoji: capturedEmoji,
+      photo: capturedPhoto,
+      brand: brandVal,
+      name:  nameVal,
+      ml:    mlVal,
+      price: fv('fPrice'),
+      year:  fv('fYear'),
+      notes: csv(fv('fNotes')),
+      desc:  fv('fDesc')
+    };
+    var isSampleNew = !editingSampleId;
+    if (isSampleNew) {
+      samples.push(sampleData);
+    } else {
+      for (var j = 0; j < samples.length; j++) {
+        if (samples[j].id === sampleData.id) { samples[j] = sampleData; break; }
+      }
+    }
+    // Limpiar estado
+    editingSampleId = null;
+    modal.dataset.sampleMode = '';
+    pendingPhoto  = null;
+    selectedEmoji = EMOJIS[0];
+    editingId     = null;
+    document.getElementById('editOverlay').classList.remove('open');
+    saveSamples();
+    renderSamples();
+    showToast(isSampleNew ? 'Muestra añadida ✓' : 'Muestra actualizada ✓', 'success');
+    return;
+  }
+
+  // ── GUARDAR COMO PERFUME NORMAL ──
   var isNew = !editingId;
   var pid   = editingId || nextId++;
 
   var data = {
     id:            pid,
-    emoji:         selectedEmoji || '🌸',
-    photo:         pendingPhoto  || null,
+    emoji:         capturedEmoji,
+    photo:         capturedPhoto,
     brand:         brandVal,
     name:          nameVal,
     concentration: fv('fConc'),
@@ -3762,49 +3920,13 @@ function savePerfume() {
   }
 
   try { localStorage.setItem('qwc_perfumes_v2', JSON.stringify(perfumes)); } catch(e) {}
-  try { localStorage.setItem('qwc_nextId', String(nextId));           } catch(e) {}
+  try { localStorage.setItem('qwc_nextId', String(nextId)); } catch(e) {}
 
   pendingPhoto  = null;
   selectedEmoji = EMOJIS[0];
   editingId     = null;
-
+  modal.dataset.sampleMode = '';
   document.getElementById('editOverlay').classList.remove('open');
-
-  var modal = document.getElementById('editModal');
-  var isSampleMode = modal && modal.dataset.sampleMode === '1';
-
-  if (isSampleMode) {
-    // Save as sample
-    var mlVal = fv('fSize').replace(/[^0-9.]/g,'') || '2';
-    var sampleData = {
-      id:    editingSampleId || nextSampleId++,
-      emoji: selectedEmoji || '🧪',
-      photo: pendingPhoto || null,
-      brand: brandVal,
-      name:  nameVal,
-      ml:    mlVal,
-      price: fv('fPrice'),
-      year:  fv('fYear'),
-      notes: csv(fv('fNotes')),
-      desc:  fv('fDesc')
-    };
-    var isSampleNew = !editingSampleId;
-    if (isSampleNew) {
-      samples.push(sampleData);
-    } else {
-      for (var j = 0; j < samples.length; j++) {
-        if (samples[j].id === sampleData.id) { samples[j] = sampleData; break; }
-      }
-    }
-    editingSampleId = null;
-    if (modal) modal.dataset.sampleMode = '';
-    pendingPhoto = null; selectedEmoji = EMOJIS[0]; editingId = null;
-    document.getElementById('editOverlay').classList.remove('open');
-    saveSamples();
-    renderSamples();
-    showToast(isSampleNew ? 'Muestra añadida ✓' : 'Muestra actualizada ✓', 'success');
-    return;
-  }
 
   render();
   showToast(isNew ? 'Perfume añadido ✓' : 'Perfume actualizado ✓', 'success');
@@ -5031,7 +5153,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 var _savedSamples = null;
 try { _savedSamples = JSON.parse(localStorage.getItem('qwc_samples_v1')); } catch(e) {}
-var _deletedSampleIds = new Set();
+_deletedSampleIds = new Set();
 try { _deletedSampleIds = new Set(JSON.parse(localStorage.getItem('qwc_deleted_sample_ids') || '[]')); } catch(e) {}
 
 var SAMPLE_DEFAULTS = [
@@ -5123,12 +5245,12 @@ if (_savedSamples && _savedSamples.length > 0) {
   _mergedSamples = SAMPLE_DEFAULTS.filter(function(d) { return !_deletedSampleIds.has(d.id); });
 }
 
-let samples = _mergedSamples;
-let nextSampleId = Math.max.apply(null, [0].concat(SAMPLE_DEFAULTS.map(function(p){return p.id||0;}))) + 1;
+samples = _mergedSamples;
+nextSampleId = Math.max.apply(null, [0].concat(SAMPLE_DEFAULTS.map(function(p){return p.id||0;}))) + 1;
 try { var _sns = parseInt(localStorage.getItem('qwc_next_sample_id')||'0'); if (_sns > nextSampleId) nextSampleId = _sns; } catch(e) {}
-let editingSampleId = null;
-let currentSection = 'catalog';
-let searchSampleQuery = '';
+// editingSampleId declared early above
+// currentSection declared early above
+var searchSampleQuery = '';
 
 function saveSamples() {
   try { localStorage.setItem('qwc_samples_v1', JSON.stringify(samples)); } catch(e) {}
@@ -5234,15 +5356,32 @@ var _pendingSampleDeleteId = null;
 function deleteSample(id, e) {
   if (e) e.stopPropagation();
   if (!isAdmin) return;
+  var p = samples.find(function(x){ return x.id === id; });
+  var nombre = p ? (p.brand + ' — ' + p.name) : 'esta muestra';
   _pendingSampleDeleteId = id;
+  _pendingDeleteId = null; // asegurar que el otro pending está limpio
   var existing = document.getElementById('deleteConfirmBar');
   if (existing) existing.remove();
   var bar = document.createElement('div');
   bar.id = 'deleteConfirmBar';
-  bar.className = 'delete-confirm-bar';
-  bar.innerHTML = '<span>¿Eliminar esta muestra?</span><button onclick="confirmDeleteSample()">Sí, eliminar</button><button onclick="cancelDelete()">Cancelar</button>';
+  bar.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--cream);padding:14px 20px;z-index:3000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(26,22,18,0.3);font-family:Jost,sans-serif;font-size:11px;letter-spacing:0.15em;max-width:calc(100vw - 32px);border-radius:2px;';
+  var yesBtn = document.createElement('button');
+  yesBtn.textContent = 'Sí';
+  yesBtn.style.cssText = 'background:var(--gold);border:none;color:var(--dark);padding:7px 16px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;';
+  yesBtn.onclick = function() { confirmDeleteSample(); };
+  var noBtn = document.createElement('button');
+  noBtn.textContent = 'No';
+  noBtn.style.cssText = 'background:transparent;border:1px solid rgba(247,243,238,0.3);color:rgba(247,243,238,0.6);padding:7px 16px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;';
+  noBtn.onclick = function() { bar.remove(); _pendingSampleDeleteId = null; };
+  var label = document.createElement('span');
+  label.style.cssText = 'opacity:0.7;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+  label.textContent = '¿Eliminar ' + nombre + '?';
+  bar.appendChild(label);
+  bar.appendChild(yesBtn);
+  bar.appendChild(noBtn);
   document.body.appendChild(bar);
-  setTimeout(function() { bar.classList.add('visible'); }, 10);
+  clearTimeout(bar._t);
+  bar._t = setTimeout(function() { bar.remove(); _pendingSampleDeleteId = null; }, 5000);
 }
 function confirmDeleteSample() {
   var bar = document.getElementById('deleteConfirmBar');
