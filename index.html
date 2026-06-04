@@ -1310,7 +1310,7 @@
         <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
       </svg>
     </span>
-    <input type="text" id="searchInput" placeholder="Buscar por nombre, marca o nota…" oninput="onSearch(this.value)"/>
+    <input type="text" id="searchInput" placeholder="Buscar marca, estilo, nota, ocasión…" oninput="onSearch(this.value)"/>
     <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
     <button class="search-filter-btn" id="searchFilterBtn" onclick="toggleSearchFilterPanel()" title="Filtros y orden">
       <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -4034,6 +4034,9 @@ function getSortedList(list) {
     const n = parseFloat(p.price.replace(/[^0-9.,]/g,'').replace(',','.'));
     return isNaN(n) ? 0 : n;
   }
+  // Si hay busqueda activa y el usuario no ha elegido un orden manual,
+  // respetar el orden de relevancia que viene de filteredPerfumes()
+  if (searchQuery && sfpSort === 'default') return arr;
   if (sfpSort === 'name') return arr.sort(function(a,b){ return a.name.localeCompare(b.name); });
   if (sfpSort === 'brand') return arr.sort(function(a,b){ return a.brand.localeCompare(b.brand); });
   if (sfpSort === 'price-asc') return arr.sort(function(a,b){ return getPrice(a)-getPrice(b); });
@@ -4698,12 +4701,72 @@ function clearSearch() {
   render();
 }
 
+function scorePerfume(p, terms) {
+  // Sistema de puntuacion por relevancia
+  // Cada termino de busqueda puntua segun donde coincide
+  var score = 0;
+  var brand  = (p.brand  || '').toLowerCase();
+  var name   = (p.name   || '').toLowerCase();
+  var family = (p.family || '').toLowerCase();
+  var occ    = (p.occasion || '').toLowerCase();
+  var season = (p.season || '').toLowerCase();
+  var desc   = ((p.desc || '') + ' ' + (p.descLong || '')).toLowerCase();
+  var notes  = (p.notes || []).join(' ').toLowerCase();
+  var conc   = (p.concentration || '').toLowerCase();
+  var top    = (p.top   || '').toLowerCase();
+  var heart  = (p.heart || '').toLowerCase();
+  var base   = (p.base  || '').toLowerCase();
+
+  terms.forEach(function(q) {
+    // Marca exacta: maximo peso (buscar "creed" trae todos los Creed primero)
+    if (brand === q)            score += 100;
+    else if (brand.startsWith(q)) score += 80;
+    else if (brand.includes(q)) score += 60;
+
+    // Nombre exacto
+    if (name === q)             score += 90;
+    else if (name.startsWith(q)) score += 70;
+    else if (name.includes(q))  score += 50;
+
+    // Familia olfativa (buscar "floral", "oriental", "acuatico"...)
+    if (family.includes(q))     score += 40;
+
+    // Notas olfativas (buscar "oud", "lavanda", "vainilla"...)
+    if (notes.includes(q))      score += 35;
+    if (top.includes(q))        score += 30;
+    if (heart.includes(q))      score += 28;
+    if (base.includes(q))       score += 25;
+
+    // Ocasion y temporada (buscar "noche", "verano", "citas"...)
+    if (occ.includes(q))        score += 20;
+    if (season.includes(q))     score += 18;
+
+    // Concentracion (buscar "edp", "parfum"...)
+    if (conc.includes(q))       score += 15;
+
+    // Descripcion: peso bajo pero da cobertura amplia
+    if (desc.includes(q))       score += 8;
+  });
+
+  return score;
+}
+
 function filteredPerfumes() {
   if (!searchQuery) return perfumes;
-  return perfumes.filter(function(p) {
-    var haystack = [p.name, p.brand, p.concentration, p.family, p.occasion, p.season].concat(p.notes||[]).join(' ').toLowerCase();
-    return haystack.includes(searchQuery);
+
+  var terms = searchQuery.split(/\s+/).filter(Boolean);
+
+  // Calcular puntuacion de cada perfume
+  var scored = [];
+  perfumes.forEach(function(p) {
+    var s = scorePerfume(p, terms);
+    if (s > 0) scored.push({ p: p, score: s });
   });
+
+  // Ordenar de mayor a menor puntuacion
+  scored.sort(function(a, b) { return b.score - a.score; });
+
+  return scored.map(function(x) { return x.p; });
 }
 
 // ── SETTINGS WHEEL ──
@@ -5823,9 +5886,14 @@ function renderSamples() {
 
   var list = samples.slice();
   if (searchSampleQuery) {
-    list = list.filter(function(p) {
-      return (p.name+' '+p.brand+' '+(p.notes||[]).join(' ')).toLowerCase().includes(searchSampleQuery);
+    var sterms = searchSampleQuery.split(/\s+/).filter(Boolean);
+    var sscored = [];
+    samples.forEach(function(p) {
+      var s = scorePerfume(p, sterms);
+      if (s > 0) sscored.push({ p: p, score: s });
     });
+    sscored.sort(function(a, b) { return b.score - a.score; });
+    list = sscored.map(function(x) { return x.p; });
   }
   var countEl = document.getElementById('searchCountSamples');
   if (countEl) countEl.textContent = searchSampleQuery && list.length < samples.length ? list.length + ' de ' + samples.length + ' muestras' : '';
