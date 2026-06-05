@@ -1226,6 +1226,7 @@
       color:var(--gold); opacity:0.5; grid-column:1/-1;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -3902,6 +3903,18 @@ const DEFAULTS=[
   // ── BUJAIRAMI ──
   ,{id:229,emoji:'💙',photo:null,brand:'Bujairami',name:'Hectic Extrait de Parfum',concentration:'Extrait de Parfum',price:'35',year:'2023',nose:'',family:'Citrica Aromatica',occasion:'Dia, verano, trabajo',season:'Primavera / Verano',duration:'8-10 horas',sillage:'Moderada',notes:['Limon','Bergamota','Jengibre','Cedro','Vetiver','Almizcle'],top:'Limon, Bergamota, Jengibre',heart:'Cedro, Cardamomo, Iris',base:'Vetiver, Almizcle, Ambar',desc:'Hectic. Jengibre y limón frenéticos de la nueva joya árabe.',descLong:'Hectic de Bujairami es el extrait de parfum mas vibrante de la joven marca arabiga. Limon y jengibre energeticos sobre cedro e iris terminando en vetiver y almizcle. Moderno, fresco y con la calidad de extrait que lo hace excepcional para su precio.',reviews:[]}
 
+  // ── VALENTINO (añadidos) ──
+  ,{id:230,emoji:'🌸',photo:null,brand:'Valentino',name:'Born in Roma Coral Fantasy EDP',concentration:'Eau de Parfum',price:'36',year:'2022',nose:'',family:'Floral Frutal',occasion:'Dia, primavera, casual',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Bergamota','Naranja','Gardenia','Sandalo','Almizcle'],top:'Bergamota, Naranja Coral',heart:'Gardenia, Flor de Cactus',base:'Sandalo, Ambar, Almizcle',desc:'Roma en coral. Floral tropical con el ADN de Born in Roma.',descLong:'Coral Fantasy lleva la saga Born in Roma al Mediterraneo tropical. Bergamota y naranja coral abren gardenia y flor de cactus sobre sandalo y almizcle. Luminoso, mediterraneo y con todo el glamour del ADN Valentino.',reviews:[]}
+  ,{id:231,emoji:'🖤',photo:null,brand:'Valentino',name:'Born in Roma Uomo EDP',concentration:'Eau de Parfum',price:'35',year:'2019',nose:'',family:'Aromatica Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'8-10 horas',sillage:'Moderada-Intensa',notes:['Bergamota','Lavanda','Iris','Cedro','Ambar','Almizcle'],top:'Bergamota, Lavanda',heart:'Iris Negro, Cedro',base:'Ambar, Almizcle, Pachuli',desc:'Nacido en Roma masculino. Iris y cedro del hombre romano moderno.',descLong:'Born in Roma Uomo es el masculino mas contemporaneo de Valentino. Lavanda y bergamota sobre iris negro y cedro terminando en ambar y pachuli. El caballero romano que vive entre la tradicion y la modernidad.',reviews:[]}
+  ,{id:232,emoji:'💛',photo:null,brand:'Valentino',name:'Born in Roma Yellow Dream EDP',concentration:'Eau de Parfum',price:'35',year:'2020',nose:'',family:'Floral Frutal',occasion:'Dia, primavera, versatil',season:'Primavera / Verano',duration:'7-8 horas',sillage:'Moderada',notes:['Limon','Bergamota','Mimosa','Sandalo','Vainilla','Almizcle'],top:'Limon, Bergamota, Mandarina',heart:'Mimosa, Flor de Cacto, Gardenia',base:'Sandalo, Vainilla, Almizcle Blanco',desc:'El sueño amarillo de Roma. Limon, mimosa y vainilla soleados.',descLong:'Born in Roma Yellow Dream es el mas soleado y alegre de la saga. Limon y bergamota chispeantes sobre mimosa y gardenia terminando en vainilla y sandalo. El verano romano en toda su explosion de luz y color.',reviews:[]}
+  ,{id:233,emoji:'🔴',photo:null,brand:'Valentino',name:'Voce Viva Intensa EDP',concentration:'Eau de Parfum Intensa',price:'38',year:'2021',nose:'',family:'Floral Oriental',occasion:'Noche, citas, otono',season:'Otono / Invierno',duration:'9-11 horas',sillage:'Intensa',notes:['Bergamota','Flor de Naranjo','Gardenia','Vainilla Africana','Ambar'],top:'Bergamota, Mandarina',heart:'Flor de Naranjo, Gardenia, Tuberosa',base:'Vainilla Africana, Ambar, Almizcle',desc:'Voce Viva más intensa. Flor de naranjo y vainilla africana opulentos.',descLong:'Voce Viva Intensa profundiza la formula original con flor de naranjo mas densa y vainilla africana absoluta en la base. La voz femenina mas intensa y seductora de Valentino para las noches que merece la pena recordar.',reviews:[]}
+  ,{id:234,emoji:'🌹',photo:null,brand:'Valentino',name:'Valentina EDP',concentration:'Eau de Parfum',price:'34',year:'2011',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Bergamota','Fresa','Gardenia','Rosa','Pachuli','Cedro','Almizcle'],top:'Bergamota, Fresa, Mandarina',heart:'Gardenia, Rosa Absoluta',base:'Pachuli, Cedro, Almizcle',desc:'Valentina. La feminidad italiana en su forma más pura.',descLong:'Valentina es el floral signature de Valentino. Fresa y bergamota abren gardenia y rosa absoluta sobre pachuli y cedro. Elegante, italiana y con la feminidad inconfundible de la maison que viste a las mujeres mas sofisticadas del mundo.',reviews:[]}
+  ,{id:235,emoji:'💫',photo:null,brand:'Valentino',name:'Valentina Assoluto EDP',concentration:'Eau de Parfum',price:'36',year:'2013',nose:'',family:'Floral Oriental',occasion:'Noche, citas, invierno',season:'Otono / Invierno',duration:'9-11 horas',sillage:'Intensa',notes:['Bergamota','Gardenia','Rosa','Pachuli','Madera','Ambar'],top:'Bergamota, Mandarina',heart:'Gardenia Absoluta, Rosa, Jazmin',base:'Pachuli, Madera, Ambar, Almizcle',desc:'Valentina en su máxima expresión. Gardenia absoluta y pachulí opulento.',descLong:'Valentina Assoluto es la version mas lujosa y oscura de la saga. Gardenia absoluta y rosa sobre pachuli denso y ambar calido. Para la mujer que quiere la feminidad Valentino en su forma mas intensa y memorable.',reviews:[]}
+  ,{id:236,emoji:'🌊',photo:null,brand:'Valentino',name:'Acqua Floreale EDT',concentration:'Eau de Toilette',price:'30',year:'2012',nose:'',family:'Floral Acuatica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'4-6 horas',sillage:'Ligera',notes:['Bergamota','Notas Acuaticas','Gardenia','Jazmin','Almizcle Blanco'],top:'Bergamota, Notas Acuaticas',heart:'Gardenia, Jazmin, Rosa',base:'Almizcle Blanco, Cedro',desc:'Acqua floral. El Valentino más fresco y ligero para el verano.',descLong:'Acqua Floreale es la fragancia veraniega y acuatica de Valentino. Bergamota y notas acuaticas abren gardenia y jazmin sobre almizcle blanco. Fresca, ligera y perfecta para los dias calurosos con el sello de distincion italiano.',reviews:[]}
+  ,{id:237,emoji:'💚',photo:null,brand:'Valentino',name:'V EDP',concentration:'Eau de Parfum',price:'33',year:'2004',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, clasico',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Bergamota','Rosa','Iris','Sandalo','Vainilla','Almizcle'],top:'Bergamota, Rosa, Mandarina',heart:'Iris, Peonia, Magnolia',base:'Sandalo, Vainilla, Almizcle',desc:'V de Valentino. El floral clásico e intemporal de la casa.',descLong:'V es el floral mas clasico y reconocible de Valentino. Bergamota y rosa abren iris y peonia sobre sandalo y vainilla. Un floral amaderado intemporal que representa la elegancia italiana en su forma mas arquetipica.',reviews:[]}
+  ,{id:238,emoji:'🖤',photo:null,brand:'Valentino',name:'Uomo Born in Roma EDP',concentration:'Eau de Parfum',price:'36',year:'2019',nose:'',family:'Aromatica Amaderada',occasion:'Noche, trabajo, versatil',season:'Todo el ano',duration:'8-10 horas',sillage:'Moderada-Intensa',notes:['Pimienta','Bergamota','Iris','Vetiver','Sandalo','Ambar'],top:'Pimienta Rosa, Bergamota',heart:'Iris Negro, Lavanda',base:'Vetiver, Sandalo, Ambar',desc:'Uomo en Roma. El masculino más moderno y urbano de Valentino.',descLong:'Uomo Born in Roma toma el iris caracteristico del Uomo y lo envuelve en pimienta y vetiver para un resultado mas oscuro y urbanita. El perfume del romano moderno que trabaja de dia y sale de noche sin cambiarse.',reviews:[]}
+  ,{id:239,emoji:'💙',photo:null,brand:'Valentino',name:'Uomo Acqua EDT',concentration:'Eau de Toilette',price:'31',year:'2016',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, deporte',season:'Primavera / Verano',duration:'5-7 horas',sillage:'Moderada',notes:['Lima','Bergamota','Menta','Cedro','Almizcle','Ambar'],top:'Lima, Bergamota, Menta',heart:'Cedro, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Uomo en el agua. El verano masculino más fresco de Valentino.',descLong:'Uomo Acqua lleva el iris clasico del Uomo al universo marino y fresco. Lima y menta sobre cedro y geranio terminando en almizcle y ambar. El Valentino masculino para el verano activo y deportivo.',reviews:[]}
+
 ];
 
 // ── CLOUD SYNC (Firebase Realtime Database) ──
@@ -5297,6 +5310,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Load from cloud and re-render with fresh data
   const loaded = await cloudLoad();
   if (loaded) { render(); updateCartCount(); }
+  // If admin is logged in, load messages from Firebase immediately
+  if (typeof updatePedidosTab === 'function') updatePedidosTab();
 });
 
 // ══════════════════════════════════════════════════════════════════
@@ -5627,6 +5642,65 @@ function loadMessages() {
 
 function saveMessages() {
   try { localStorage.setItem(MESSAGES_KEY, JSON.stringify(adminMessages)); } catch(e) {}
+  // Sync to Firebase so admin sees orders from any device
+  if (firebaseReady()) {
+    fetch(FIREBASE_URL + '/qwincopi_messages.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(adminMessages)
+    }).catch(function(){});
+  }
+}
+
+// Load messages from Firebase (called on startup and every 30s for admin)
+async function loadMessagesFromCloud() {
+  if (!firebaseReady()) return;
+  try {
+    const res = await fetch(FIREBASE_URL + '/qwincopi_messages.json');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !Array.isArray(data)) return;
+    // Merge: keep local read-status, add new messages from cloud
+    const localIds = new Set(adminMessages.map(function(m){ return m.id; }));
+    var hasNew = false;
+    data.forEach(function(m) {
+      if (!localIds.has(m.id)) {
+        adminMessages.push(m);
+        hasNew = true;
+      }
+    });
+    // Also update read status from cloud for messages we already have
+    var cloudMap = {};
+    data.forEach(function(m){ cloudMap[m.id] = m; });
+    adminMessages.forEach(function(m) {
+      if (cloudMap[m.id] && cloudMap[m.id].read !== m.read) {
+        // keep local read status (admin marks as read locally)
+      }
+    });
+    if (hasNew) {
+      // Sort by timestamp descending
+      adminMessages.sort(function(a,b){ return b.id - a.id; });
+      try { localStorage.setItem(MESSAGES_KEY, JSON.stringify(adminMessages)); } catch(e) {}
+      updateMessagesBadge();
+      if (typeof updatePedidosTab === 'function') updatePedidosTab();
+      if (typeof renderMessagesList === 'function' && document.getElementById('messagesDrawer') && document.getElementById('messagesDrawer').classList.contains('open')) {
+        renderMessagesList();
+      }
+    }
+  } catch(e) {}
+}
+
+// Poll Firebase for new orders every 30 seconds when admin is logged in
+var _messagesPollTimer = null;
+function startMessagesPoll() {
+  stopMessagesPoll();
+  loadMessagesFromCloud();
+  _messagesPollTimer = setInterval(function() {
+    loadMessagesFromCloud();
+  }, 30000);
+}
+function stopMessagesPoll() {
+  if (_messagesPollTimer) { clearInterval(_messagesPollTimer); _messagesPollTimer = null; }
 }
 
 function updateMessagesBadge() {
@@ -5647,7 +5721,16 @@ function updateMessagesBadge() {
 }
 
 // ── Crear nuevo mensaje de pedido ──
+// ── Configuración EmailJS ──
+// Para activar: crea cuenta en emailjs.com, crea un servicio Email y una plantilla,
+// y pega aquí los IDs. Las variables de la plantilla son: {{cliente}}, {{email_cliente}},
+// {{productos}}, {{total}}, {{direccion}}, {{fecha}}
+const EMAILJS_SERVICE_ID  = 'PEGA_TU_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'PEGA_TU_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY  = 'PEGA_TU_PUBLIC_KEY';
+
 function sendOrderMessage(clientName, clientEmail, orderDetails, totalStr, address) {
+  // 1. Guardar en panel de Pedidos interno
   const msg = {
     id: Date.now(),
     from: clientName + ' (' + clientEmail + ')',
@@ -5662,34 +5745,26 @@ function sendOrderMessage(clientName, clientEmail, orderDetails, totalStr, addre
   updateMessagesBadge();
   if (typeof updatePedidosTab === 'function') updatePedidosTab();
 
-  // Enviar email a QwinCop@gmail.com
-  var subject = encodeURIComponent('🛍️ Nuevo pedido QwinCop — ' + clientName);
-  var bodyText = [
-    'NUEVO PEDIDO EN QWINCOP',
-    '',
-    'Cliente: ' + clientName,
-    'Email: ' + clientEmail,
-    '',
-    'PRODUCTOS:',
-    orderDetails,
-    '',
-    'TOTAL: ' + totalStr,
-    '',
-    'DIRECCION DE ENVIO:',
-    (address || 'No especificada'),
-    '',
-    'Fecha: ' + new Date().toLocaleString('es-ES'),
-    '',
-    '— QwinCop Shop'
-  ].join('%0A');
-  var body = bodyText;
-  // Abrir cliente de email sin navegar fuera de la página
-  var link = document.createElement('a');
-  link.href = 'mailto:QwinCop@gmail.com?subject=' + subject + '&body=' + body;
-  link.style.display = 'none';
-  document.body.appendChild(link);
-  link.click();
-  setTimeout(function() { document.body.removeChild(link); }, 500);
+  // 2. Enviar email real a 2024diciembrealejandro@gmail.com via EmailJS
+  if (EMAILJS_SERVICE_ID !== 'PEGA_TU_SERVICE_ID') {
+    try {
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        cliente:        clientName,
+        email_cliente:  clientEmail,
+        productos:      orderDetails,
+        total:          totalStr,
+        direccion:      address || 'No especificada',
+        fecha:          new Date().toLocaleString('es-ES')
+      }).then(function() {
+        console.log('Email de pedido enviado OK');
+      }).catch(function(err) {
+        console.warn('EmailJS error:', err);
+      });
+    } catch(e) {
+      console.warn('EmailJS no disponible:', e);
+    }
+  }
 }
 
 // ── Abrir panel de mensajes ──
@@ -5781,8 +5856,12 @@ function updatePedidosTab() {
   if (currentUser && currentUser.email.toLowerCase() === PEDIDOS_EMAIL.toLowerCase()) {
     tab.style.display = 'flex';
     updatePedidosBadge();
+    // Start polling Firebase for new orders every 30 seconds
+    if (typeof startMessagesPoll === 'function') startMessagesPoll();
   } else {
     tab.style.display = 'none';
+    // Stop polling when admin logs out
+    if (typeof stopMessagesPoll === 'function') stopMessagesPoll();
   }
 }
 
@@ -6121,8 +6200,6 @@ function renderSamples() {
 
     card.addEventListener('click', function(ev) {
       if (ev.target.closest('.card-actions')) return;
-      var msg = encodeURIComponent('Hola! Me interesa la muestra: ' + p.brand + ' - ' + p.name + ' (' + (p.ml||'2') + 'ml) por ' + convertPrice(p.price));
-      window.open('https://wa.me/34641097492?text=' + msg, '_blank');
     });
     grid.appendChild(card);
   });
