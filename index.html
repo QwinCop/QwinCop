@@ -1363,6 +1363,21 @@
   <div class="detail-body" id="detailBody"></div>
 </div>
 
+
+<!-- ── SAMPLE DETAIL PANEL ── -->
+<div class="overlay" id="sampleDetailOverlay" onclick="closeSampleDetail()" style="z-index:150;"></div>
+<div class="detail-panel" id="sampleDetailPanel" style="z-index:151;">
+  <div class="detail-hero">
+    <button class="detail-close" onclick="closeSampleDetail()">✕</button>
+    <div id="sDHeroImg"></div>
+    <p class="detail-brand" id="sDBrand"></p>
+    <h2 class="detail-name" id="sDName"></h2>
+    <p class="detail-conc" id="sDConc"></p>
+  </div>
+  <div class="detail-body" id="sDetailBody"></div>
+  <div class="detail-actions" id="sDetailActions"></div>
+</div>
+
 <!-- ── EDIT MODAL ── -->
 <div class="overlay" id="editOverlay" onclick="if(event.target===this)closeEditModal()" onmousedown="void 0">
   <div class="modal">
@@ -6260,6 +6275,7 @@ function renderSamples() {
 
     card.addEventListener('click', function(ev) {
       if (ev.target.closest('.card-actions')) return;
+      openSampleDetail(p.id);
     });
     grid.appendChild(card);
   });
@@ -6316,6 +6332,123 @@ function confirmDeleteSample() {
   saveSamples();
   renderSamples();
   showToast('Muestra eliminada', 'info');
+}
+
+
+// ════════════════════════════════════════════
+// ── SAMPLE DETAIL PANEL ──
+// ════════════════════════════════════════════
+
+let currentSampleDetailId = null;
+
+function openSampleDetail(id) {
+  const p = samples.find(function(x){ return x.id === id; });
+  if (!p) return;
+  currentSampleDetailId = id;
+
+  // Hero
+  var heroEl = document.getElementById('sDHeroImg');
+  if (p.photo) {
+    heroEl.innerHTML = '<img class="detail-photo" src="' + p.photo + '" alt="' + p.name + '"/>';
+  } else {
+    heroEl.innerHTML = '<span class="detail-emoji">' + (p.emoji || '🧪') + '</span>';
+  }
+  document.getElementById('sDBrand').textContent = p.brand || '';
+  document.getElementById('sDName').textContent  = p.name  || '';
+  document.getElementById('sDConc').textContent  = (p.ml || '2') + ' ml · Muestra de prueba';
+
+  // Body
+  var notesHtml = '';
+  if (p.notes && p.notes.length) {
+    notesHtml = '<div class="detail-notes-row">' +
+      p.notes.map(function(n){ return '<span class="tag">' + n + '</span>'; }).join('') +
+      '</div>';
+  }
+
+  // Pyramid
+  var pyramidHtml = '';
+  if (p.top || p.heart || p.base) {
+    pyramidHtml = '<div class="detail-section"><p class="detail-section-label">Pirámide olfativa</p>' +
+      '<div class="pyramid-grid">' +
+      (p.top   ? '<div class="pyramid-tier"><span class="pyramid-label">Salida</span><p class="pyramid-notes">'  + p.top   + '</p></div>' : '') +
+      (p.heart ? '<div class="pyramid-tier"><span class="pyramid-label">Corazón</span><p class="pyramid-notes">' + p.heart + '</p></div>' : '') +
+      (p.base  ? '<div class="pyramid-tier"><span class="pyramid-label">Fondo</span><p class="pyramid-notes">'   + p.base  + '</p></div>' : '') +
+      '</div></div>';
+  }
+
+  // Stats grid
+  var statsHtml = '<div class="detail-stats-grid">' +
+    (p.ml       ? '<div class="stat-item"><span class="stat-label">Volumen</span><span class="stat-val">' + p.ml + ' ml</span></div>' : '') +
+    (p.price    ? '<div class="stat-item"><span class="stat-label">Precio</span><span class="stat-val">' + convertPrice(p.price) + '</span></div>' : '') +
+    (p.family   ? '<div class="stat-item"><span class="stat-label">Familia</span><span class="stat-val">' + p.family + '</span></div>' : '') +
+    (p.season   ? '<div class="stat-item"><span class="stat-label">Temporada</span><span class="stat-val">' + p.season + '</span></div>' : '') +
+    (p.occasion ? '<div class="stat-item"><span class="stat-label">Ocasión</span><span class="stat-val">' + p.occasion + '</span></div>' : '') +
+    (p.duration ? '<div class="stat-item"><span class="stat-label">Duración</span><span class="stat-val">' + p.duration + '</span></div>' : '') +
+    (p.sillage  ? '<div class="stat-item"><span class="stat-label">Proyección</span><span class="stat-val">' + p.sillage + '</span></div>' : '') +
+    (p.concentration ? '<div class="stat-item"><span class="stat-label">Concentración</span><span class="stat-val">' + p.concentration + '</span></div>' : '') +
+    '</div>';
+
+  var descHtml = p.descLong
+    ? '<div class="detail-section"><p class="detail-section-label">Sobre esta muestra</p><p class="detail-desc-text">' + p.descLong + '</p></div>'
+    : (p.desc ? '<div class="detail-section"><p class="detail-section-label">Sobre esta muestra</p><p class="detail-desc-text">' + p.desc + '</p></div>' : '');
+
+  document.getElementById('sDetailBody').innerHTML =
+    '<div class="detail-section">' +
+      '<p class="detail-section-label">Precio · Muestra ' + (p.ml||'2') + ' ml</p>' +
+      '<p class="detail-price">' + convertPrice(p.price) + '</p>' +
+    '</div>' +
+    (p.notes && p.notes.length ? '<div class="detail-section">' + notesHtml + '</div>' : '') +
+    pyramidHtml +
+    '<div class="detail-section"><p class="detail-section-label">Detalles</p>' + statsHtml + '</div>' +
+    descHtml +
+    '<div class="detail-section" style="text-align:center;padding:8px 0 4px;">' +
+      '<p style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);opacity:0.6;">Muestra de prueba · Sin compromiso</p>' +
+    '</div>';
+
+  // Actions
+  document.getElementById('sDetailActions').innerHTML =
+    '<button class="btn-buy" onclick="addSampleToCart(' + id + ')">Añadir al carrito</button>' +
+    (isAdmin ? '<button class="btn-cart-add" onclick="openSampleEdit(' + id + ',event);closeSampleDetail()"><span>Editar</span></button>' : '');
+
+  // Open
+  document.getElementById('sampleDetailOverlay').classList.add('open');
+  document.getElementById('sampleDetailPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSampleDetail() {
+  document.getElementById('sampleDetailOverlay').classList.remove('open');
+  document.getElementById('sampleDetailPanel').classList.remove('open');
+  document.body.style.overflow = '';
+  currentSampleDetailId = null;
+}
+
+function addSampleToCart(id) {
+  var p = samples.find(function(x){ return x.id === id; });
+  if (!p) return;
+  // Use normal cart with a sample marker
+  var cartItem = {
+    id: 'sample_' + id,
+    name: p.name + ' (' + (p.ml||'2') + 'ml muestra)',
+    brand: p.brand,
+    price: p.price,
+    emoji: p.emoji,
+    photo: p.photo,
+    concentration: (p.ml||'2') + 'ml Muestra',
+    isSample: true
+  };
+  // Add to cart
+  var existing = cart.find(function(c){ return c.id === cartItem.id; });
+  if (existing) {
+    existing.qty = (existing.qty || 1) + 1;
+  } else {
+    cartItem.qty = 1;
+    cart.push(cartItem);
+  }
+  saveCart();
+  updateCartCount();
+  showToast('Muestra añadida al carrito ✓', 'success');
+  closeSampleDetail();
 }
 
 </script>
