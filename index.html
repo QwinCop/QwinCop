@@ -482,6 +482,115 @@ textarea.form-input { resize: none; }
   .perfume-card { transition: none; }
   .skeleton { animation: none; }
 }
+
+/* ── SECTION TABS ── */
+.section-tabs-bar {
+  background: var(--color-card); border-bottom: 1px solid var(--color-border);
+  position: sticky; top: 4rem; z-index: 20;
+}
+.section-tabs-inner { display: flex; gap: 0; }
+.section-tab {
+  flex: 1; max-width: 160px; padding: 0.875rem 1.25rem;
+  font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase; text-align: center;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--color-muted-foreground); border-bottom: 2px solid transparent;
+  transition: color 150ms, border-color 150ms; position: relative;
+}
+.section-tab.active { color: var(--color-gold-600); border-bottom-color: var(--color-gold-500); }
+.section-tab:hover:not(.active) { color: var(--color-dark-900); }
+
+/* ── SAMPLES SECTION ── */
+#samplesSection { display: none; }
+.samples-hero {
+  background: linear-gradient(135deg, var(--color-dark-800), oklch(20% 0.03 70));
+  padding: 3rem 0 2.5rem; text-align: center; margin-bottom: 2rem;
+}
+.samples-hero-label { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--color-gold-400); margin-bottom: 0.75rem; display: block; }
+.samples-hero-title { font-family: var(--font-serif); font-size: clamp(2rem,5vw,3.5rem); font-weight: 300; color: var(--color-cream-50); margin-bottom: 0.5rem; }
+.samples-hero-title em { color: var(--color-gold-400); font-style: italic; }
+.samples-hero-sub { font-size: 0.9rem; color: var(--color-cream-300); font-weight: 300; }
+.samples-pills { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; padding: 1.5rem 1rem 0; }
+.samples-pill {
+  font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 0.375rem 0.875rem; border: 1px solid var(--color-border);
+  color: var(--color-muted-foreground); border-radius: 9999px; background: transparent;
+}
+
+/* ── SAMPLE CARD ── */
+.sample-ml-tag {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 0.2rem 0.625rem; border-radius: 9999px;
+  background: var(--color-dark-900); color: var(--color-gold-400);
+  border: 1px solid var(--color-gold-600);
+}
+
+/* ── PROFILE DRAWER ── */
+.profile-drawer {
+  position: fixed; top: 0; right: 0; height: 100%;
+  width: min(400px, 100vw);
+  background: var(--color-card); box-shadow: var(--shadow-drawer);
+  z-index: 50; display: flex; flex-direction: column;
+  transform: translateX(100%); transition: transform 300ms var(--ease-out-expo);
+}
+.profile-drawer.open { transform: translateX(0); }
+.profile-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem; border-bottom: 1px solid var(--color-border); flex-shrink: 0;
+}
+.profile-title { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 300; }
+.profile-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.profile-section { padding: 1.25rem; border-bottom: 1px solid var(--color-border); }
+.profile-section-title { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted-foreground); margin-bottom: 1rem; }
+.profile-avatar {
+  width: 4rem; height: 4rem; border-radius: 9999px;
+  background: linear-gradient(135deg, var(--color-gold-400), var(--color-gold-600));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 1.5rem; font-weight: 300; color: white;
+  flex-shrink: 0;
+}
+.profile-user-row { display: flex; align-items: center; gap: 1rem; }
+.profile-user-name { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 300; }
+.profile-user-email { font-size: 0.8rem; color: var(--color-muted-foreground); }
+.profile-user-badge {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.2rem 0.625rem; border-radius: 9999px;
+  background: var(--color-gold-500); color: white; margin-top: 0.25rem;
+}
+.profile-auth-form { display: flex; flex-direction: column; gap: 0.75rem; }
+.profile-order-card {
+  padding: 0.875rem; border-radius: var(--radius);
+  background: var(--color-cream-100); border: 1px solid var(--color-border);
+  margin-bottom: 0.75rem;
+}
+.profile-order-date { font-size: 0.75rem; color: var(--color-muted-foreground); }
+.profile-order-items { font-size: 0.875rem; margin: 0.375rem 0; }
+.profile-order-total { font-family: var(--font-serif); font-size: 1rem; color: var(--color-gold-600); }
+.profile-settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 0; border-bottom: 1px solid var(--color-border);
+}
+.profile-settings-row:last-child { border-bottom: none; }
+.profile-settings-label { font-size: 0.875rem; font-weight: 500; }
+.profile-settings-sub { font-size: 0.75rem; color: var(--color-muted-foreground); }
+.toggle-switch {
+  position: relative; width: 2.5rem; height: 1.375rem; flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: var(--color-cream-300); border-radius: 9999px;
+  transition: background 200ms;
+}
+.toggle-slider::before {
+  content: ''; position: absolute; width: 1rem; height: 1rem;
+  border-radius: 50%; background: white; top: 3px; left: 3px;
+  transition: transform 200ms; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--color-gold-500); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(1.125rem); }
   </style>
 </head>
 <body>
@@ -593,6 +702,9 @@ textarea.form-input { resize: none; }
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span id="pedidosHeaderBadge" style="display:none;background:var(--color-destructive);color:white;font-size:0.6rem;padding:0.1rem 0.4rem;border-radius:9999px;margin-left:0.25rem;"></span>
           </button>
+          <button class="icon-btn" id="profileBtn" onclick="openProfile()" aria-label="Mi perfil y ajustes">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
           <button class="icon-btn cart-btn" id="cartBtn" onclick="openCart()" aria-label="Carrito">
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
             <span class="cart-badge" id="cartBadge" style="display:none"></span>
@@ -618,6 +730,44 @@ textarea.form-input { resize: none; }
       <div class="divider-gold fade-up stagger-3"></div>
     </div>
   </section>
+
+  <!-- SECTION TABS -->
+  <div class="section-tabs-bar">
+    <div class="container">
+      <div class="section-tabs-inner">
+        <button class="section-tab active" id="tabCatalog" onclick="switchMainSection('catalog')" aria-selected="true" role="tab">Catálogo</button>
+        <button class="section-tab" id="tabSamples" onclick="switchMainSection('samples')" aria-selected="false" role="tab">Prueba</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAMPLES SECTION -->
+  <div id="samplesSection">
+    <div class="samples-hero">
+      <div class="container">
+        <span class="samples-hero-label">Descubre antes de invertir</span>
+        <h2 class="samples-hero-title">Muestras de <em>Prueba</em></h2>
+        <p class="samples-hero-sub">Fragancias de lujo · desde €2</p>
+      </div>
+    </div>
+    <div class="samples-pills" style="margin-bottom:1.5rem;">
+      <span class="samples-pill">Sin compromiso</span>
+      <span class="samples-pill">Alta perfumería</span>
+      <span class="samples-pill">Desde 2 ml</span>
+    </div>
+    <div class="container">
+      <div class="search-icon-wrap" style="max-width:28rem;margin-bottom:1.5rem;">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:var(--color-muted-foreground);"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+        <input type="search" id="samplesSearch" class="search-input" placeholder="Buscar muestra..." oninput="onSamplesSearch(this.value)" aria-label="Buscar muestras"/>
+      </div>
+      <div class="perfume-grid" id="samplesGrid" role="list" aria-label="Catálogo de muestras"></div>
+      <div class="empty-state" id="samplesEmpty" style="display:none">
+        <span class="empty-state-icon">🔍</span>
+        <p class="empty-state-title">Sin resultados</p>
+        <p class="empty-state-sub">Prueba con otro término</p>
+      </div>
+    </div>
+  </div>
 
   <!-- MAIN CONTENT -->
   <main class="main-content" id="main-content">
@@ -710,6 +860,19 @@ textarea.form-input { resize: none; }
       <p class="footer-sub">Más de 270 fragancias de lujo a precios accesibles</p>
     </div>
   </footer>
+
+
+<!-- ── PROFILE DRAWER ── -->
+<div class="drawer-overlay" id="profileOverlay" onclick="closeProfile()" style="display:none;"></div>
+<div class="profile-drawer" id="profileDrawer" role="dialog" aria-modal="true" aria-label="Perfil y ajustes">
+  <div class="profile-header">
+    <h2 class="profile-title">Mi Perfil</h2>
+    <button class="icon-btn" onclick="closeProfile()" aria-label="Cerrar perfil">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="profile-body" id="profileBody"></div>
+</div>
 
 </div><!-- /#homePage -->
 
@@ -3953,14 +4116,14 @@ function addToCart(id) {
 }
 
 function removeFromCart(id) {
-  cart = cart.filter(c => c.id !== id);
+  cart = cart.filter(c => c.id !== id && String(c.id) !== String(id));
   saveCart(); updateCartBadge(); renderCart();
 }
 
 function setCartQty(id, qty) {
   if (qty < 1) { removeFromCart(id); return; }
   if (qty > 99) return;
-  const item = cart.find(c => c.id === id);
+  const item = cart.find(c => c.id === id || String(c.id) === String(id));
   if (item) { item.qty = qty; saveCart(); updateCartBadge(); renderCart(); }
 }
 
@@ -4010,8 +4173,13 @@ function renderCart() {
   }
   body.innerHTML = `<ul class="cart-items-list" role="list" aria-label="Artículos en el carrito">
     ${cart.map(c => {
-      const p = perfumes.find(x=>x.id===c.id);
+      // Support sample items
+      const isSampleItem = !!c._sampleId;
+      const p = isSampleItem
+        ? samples.find(x=>x.id===c._sampleId)
+        : perfumes.find(x=>x.id===c.id);
       if (!p) return '';
+      const concDisplay = isSampleItem ? (p.ml||'2') + ' ml · Muestra' : (p.concentration||'');
       const thumb = p.photo ? `<img src="${p.photo}" alt="" loading="lazy"/>` : `<span>${p.emoji||'🌸'}</span>`;
       const subtotal = (parseFloat(p.price||0)*(c.qty||1)).toFixed(2);
       return `<li class="cart-item">
@@ -4019,11 +4187,11 @@ function renderCart() {
         <div class="cart-item-info">
           <div class="cart-item-brand">${p.brand}</div>
           <div class="cart-item-name">${p.name}</div>
-          ${p.concentration?`<div class="cart-item-conc">${p.concentration}</div>`:''}
+          ${concDisplay?`<div class="cart-item-conc">${concDisplay}</div>`:''}
           <div class="cart-item-price">${subtotal} €</div>
         </div>
         <div class="cart-item-controls">
-          <button class="cart-item-remove" onclick="removeFromCart(${c.id})" aria-label="Eliminar ${p.name}">
+          <button class="cart-item-remove" onclick="removeFromCart('${c.id}')" aria-label="Eliminar ${p.name}">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
           </button>
           <div class="qty-controls">
@@ -4315,6 +4483,22 @@ function sendOrderMessage(clientName, clientEmail, orderDetails, totalStr, addre
   adminMsgs.unshift(msg);
   saveMsgs();
   updatePedidosBadge();
+  // Save order to user account
+  if (currentUser) {
+    if (!currentUser.orders) currentUser.orders = [];
+    currentUser.orders.push({
+      date: Date.now(),
+      items: cart.map(function(c){
+        const isSampleItem = !!c._sampleId;
+        const p = isSampleItem ? samples.find(x=>x.id===c._sampleId) : perfumes.find(x=>x.id===c.id);
+        return p ? { name: p.name, brand: p.brand, qty: c.qty||1 } : null;
+      }).filter(Boolean),
+      total: totalStr
+    });
+    const users = getUsers();
+    users[currentUser.email] = Object.assign({}, users[currentUser.email], { orders: currentUser.orders });
+    saveUsers(users);
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -4496,13 +4680,15 @@ document.getElementById('drawerOverlay').addEventListener('click', () => {
 // ══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('footerYear').textContent = new Date().getFullYear();
+  loadSession();
   loadMsgs();
   loadPerfumes();
+  buildSamples();
   buildFilterChips();
   render();
   updateCartBadge();
 
-  if (isAdmin) {
+  if (isAdmin || (currentUser && currentUser.email.toLowerCase() === PEDIDOS_EMAIL.toLowerCase())) {
     document.getElementById('adminBtn').style.display='inline-flex';
     document.getElementById('pedidosBtn').style.display='inline-flex';
     updatePedidosBadge();
@@ -4512,6 +4698,468 @@ document.addEventListener('DOMContentLoaded', async function() {
   const loaded = await cloudLoad();
   if (loaded) { buildFilterChips(); render(); updateCartBadge(); }
 });
+
+
+// ════════════════════════════════════════════
+// ── SECTION SWITCHING ──
+// ════════════════════════════════════════════
+var mainSection = 'catalog';
+
+function switchMainSection(section) {
+  mainSection = section;
+  document.getElementById('tabCatalog').classList.toggle('active', section === 'catalog');
+  document.getElementById('tabSamples').classList.toggle('active', section === 'samples');
+  document.getElementById('main-content').style.display = section === 'catalog' ? '' : 'none';
+  document.getElementById('samplesSection').style.display = section === 'samples' ? '' : 'none';
+  if (section === 'samples') renderSamplesGrid();
+}
+
+// ════════════════════════════════════════════
+// ── SAMPLES DATA ──
+// ════════════════════════════════════════════
+var _savedSamples = null;
+try { _savedSamples = JSON.parse(localStorage.getItem('qwc_samples_v1')); } catch(e) {}
+var _deletedSampleIds2 = new Set();
+try { _deletedSampleIds2 = new Set(JSON.parse(localStorage.getItem('qwc_deleted_sample_ids') || '[]')); } catch(e) {}
+
+function buildSamples() {
+  if (_savedSamples && _savedSamples.length > 0) {
+    var savedMap = {};
+    _savedSamples.forEach(function(p) { savedMap[p.id] = p; });
+    samples = SAMPLE_DEFAULTS.filter(function(d) { return !_deletedSampleIds2.has(d.id); })
+      .map(function(d) { return savedMap[d.id] ? savedMap[d.id] : d; });
+    var defIds = new Set(SAMPLE_DEFAULTS.map(function(p) { return p.id; }));
+    _savedSamples.forEach(function(p) {
+      if (!defIds.has(p.id) && !_deletedSampleIds2.has(p.id)) samples.push(p);
+    });
+  } else {
+    samples = SAMPLE_DEFAULTS.filter(function(d) { return !_deletedSampleIds2.has(d.id); });
+  }
+  nextSampleId = Math.max.apply(null, [0].concat(SAMPLE_DEFAULTS.map(function(p){return p.id||0;}))) + 1;
+}
+
+function saveSamples() {
+  try { localStorage.setItem('qwc_samples_v1', JSON.stringify(samples)); } catch(e) {}
+  if (firebaseReady()) {
+    fetch(FIREBASE_URL + '/qwincopi_samples.json', {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ samples: samples, deletedSampleIds: [..._deletedSampleIds2] })
+    }).catch(function(){});
+  }
+}
+
+// ════════════════════════════════════════════
+// ── SAMPLES GRID ──
+// ════════════════════════════════════════════
+var samplesSearchQuery = '';
+
+function onSamplesSearch(val) {
+  samplesSearchQuery = val.toLowerCase().trim();
+  renderSamplesGrid();
+}
+
+function renderSamplesGrid() {
+  var grid = document.getElementById('samplesGrid');
+  var empty = document.getElementById('samplesEmpty');
+  if (!grid) return;
+
+  var list = samples.slice();
+  if (samplesSearchQuery) {
+    var terms = samplesSearchQuery.split(/\s+/).filter(Boolean);
+    var scored = list.map(function(p) { return { p: p, score: scorePerfume(p, terms) }; }).filter(function(x) { return x.score > 0; });
+    scored.sort(function(a,b) { return b.score - a.score; });
+    list = scored.map(function(x) { return x.p; });
+  }
+
+  grid.innerHTML = '';
+  empty.style.display = list.length === 0 ? 'flex' : 'none';
+  if (list.length === 0) return;
+
+  list.forEach(function(p, i) {
+    var price = parseFloat(p.price || 0);
+    var card = document.createElement('div');
+    card.className = 'perfume-card';
+    card.setAttribute('role','article');
+    card.style.animationDelay = (i * 0.04) + 's';
+    card.classList.add('fade-up');
+
+    var mediaHtml = p.photo
+      ? '<img src="' + p.photo + '" alt="' + p.name + '" loading="lazy"/>'
+      : '<span class="card-emoji">' + (p.emoji || '🧪') + '</span>';
+
+    var notesPreview = (p.notes||[]).length
+      ? '<p class="card-notes-preview">' + (p.notes||[]).slice(0,3).join(' · ') + '</p>'
+      : '';
+
+    var adminActions = isAdmin ? '<div style="position:absolute;top:0.5rem;left:0.5rem;display:flex;gap:0.25rem;z-index:2;">'
+      + '<button class="icon-btn" style="background:rgba(255,255,255,0.9);padding:0.25rem;" onclick="editSample('+p.id+',event)" aria-label="Editar"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>'
+      + '<button class="icon-btn" style="background:rgba(255,255,255,0.9);padding:0.25rem;color:var(--color-destructive);" onclick="deleteSample('+p.id+',event)" aria-label="Eliminar"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>'
+      + '</div>' : '';
+
+    card.innerHTML =
+      '<div class="card-media" style="position:relative;">' + adminActions + mediaHtml
+      + '<span style="position:absolute;top:0.5rem;right:0.5rem;background:rgba(255,255,255,0.85);color:var(--color-gold-600);font-size:0.6rem;font-weight:600;padding:0.15rem 0.5rem;border-radius:9999px;border:1px solid var(--color-cream-300);">MUESTRA</span>'
+      + '</div>'
+      + '<div class="card-body">'
+      + '<p class="card-brand">' + (p.brand||'') + '</p>'
+      + '<h3 class="card-name">' + (p.name||'') + '</h3>'
+      + '<span class="sample-ml-tag">' + (p.ml||'2') + ' ml</span>'
+      + notesPreview
+      + '<div class="card-footer" style="margin-top:0.5rem;">'
+      + '<span class="card-price">' + price.toFixed(2) + ' €</span>'
+      + '<button class="btn-add-cart" id="sAddBtn' + p.id + '" onclick="addSampleToCart(' + p.id + ',event)" aria-label="Añadir muestra al carrito">'
+      + '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>'
+      + 'Añadir</button>'
+      + '</div></div>';
+
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('button')) return;
+      openSampleDrawer(p.id);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function addSampleToCart(id, e) {
+  if (e) e.stopPropagation();
+  var p = samples.find(function(x){ return x.id === id; });
+  if (!p) return;
+  var cartId = 'sample_' + id;
+  var existing = cart.find(function(c){ return c.id === cartId; });
+  if (existing) existing.qty = (existing.qty||1) + 1;
+  else cart.push({ id: cartId, qty: 1, _sampleId: id });
+  saveCart(); updateCartBadge();
+  showToast(p.name + ' (muestra) añadida ✓', 'success');
+  var btn = document.getElementById('sAddBtn' + id);
+  if (btn) { btn.textContent = 'Añadido'; btn.classList.add('added'); setTimeout(function(){ btn.innerHTML = '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg> Añadir'; btn.classList.remove('added'); }, 1500); }
+}
+
+// ── Sample drawer (reutiliza perfume drawer) ──
+function openSampleDrawer(id) {
+  var p = samples.find(function(x){ return x.id === id; });
+  if (!p) return;
+  var price = parseFloat(p.price || 0);
+
+  document.getElementById('drawerHero').innerHTML = p.photo
+    ? '<img src="' + p.photo + '" alt="' + p.name + '" loading="lazy"/>'
+    : '<span class="drawer-hero-emoji">' + (p.emoji||'🧪') + '</span>';
+
+  var pyramidHtml = (p.top||p.heart||p.base) ? '<div>'
+    + '<h3 class="section-subtitle" style="margin-bottom:0.75rem;">Pirámide de notas</h3>'
+    + (p.top ? '<div class="pyramid-tier"><div class="pyramid-label">Salida</div><p style="font-size:0.875rem;">' + p.top + '</p></div>' : '')
+    + (p.heart ? '<div class="pyramid-tier"><div class="pyramid-label">Corazón</div><p style="font-size:0.875rem;">' + p.heart + '</p></div>' : '')
+    + (p.base ? '<div class="pyramid-tier"><div class="pyramid-label">Base</div><p style="font-size:0.875rem;">' + p.base + '</p></div>' : '')
+    + '</div>' : '';
+
+  var notesHtml = (p.notes||[]).length
+    ? '<div><h3 class="section-subtitle" style="margin-bottom:0.5rem;">Notas</h3><div class="notes-wrap">' + (p.notes||[]).map(function(n){ return '<span class="note-tag">'+n+'</span>'; }).join('') + '</div></div>'
+    : '';
+
+  var metaHtml = '<div class="meta-grid">'
+    + (p.ml ? '<div class="meta-item"><div><div class="meta-label">Volumen</div><div class="meta-val">' + p.ml + ' ml</div></div></div>' : '')
+    + (p.family ? '<div class="meta-item"><div><div class="meta-label">Familia</div><div class="meta-val">' + p.family + '</div></div></div>' : '')
+    + (p.season ? '<div class="meta-item"><div><div class="meta-label">Temporada</div><div class="meta-val">' + p.season + '</div></div></div>' : '')
+    + (p.duration ? '<div class="meta-item"><div><div class="meta-label">Duración</div><div class="meta-val">' + p.duration + '</div></div></div>' : '')
+    + (p.sillage ? '<div class="meta-item"><div><div class="meta-label">Proyección</div><div class="meta-val">' + p.sillage + '</div></div></div>' : '')
+    + (p.occasion ? '<div class="meta-item full"><div><div class="meta-label">Ocasión</div><div class="meta-val">' + p.occasion + '</div></div></div>' : '')
+    + '</div>';
+
+  document.getElementById('drawerContent').innerHTML =
+    '<div class="drawer-brand">' + (p.brand||'') + '</div>'
+    + '<h2 class="drawer-title">' + (p.name||'') + '</h2>'
+    + '<div class="drawer-badges"><span class="sample-ml-tag">' + (p.ml||'2') + ' ml · Muestra</span></div>'
+    + '<div class="divider-gold" style="margin:0 0 0.5rem;"></div>'
+    + (p.descLong||p.desc ? '<div><p style="font-size:0.875rem;line-height:1.7;color:var(--color-dark-700);">' + (p.descLong||p.desc) + '</p></div>' : '')
+    + (Object.values({a:p.ml,b:p.family,c:p.season,d:p.duration}).some(Boolean) ? '<div><h3 class="section-subtitle" style="margin-bottom:0.5rem;">Detalles</h3>' + metaHtml + '</div>' : '')
+    + pyramidHtml + notesHtml
+    + '<div style="text-align:center;padding:1rem 0 0.5rem;"><p style="font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--color-muted-foreground);opacity:0.6;">Muestra de prueba · Sin compromiso</p></div>';
+
+  document.getElementById('drawerActions').innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">'
+    + '<span style="font-family:var(--font-serif);font-size:1.75rem;font-weight:300;">' + price.toFixed(2) + ' €</span>'
+    + '<span style="font-size:0.75rem;color:var(--color-muted-foreground);">' + (p.ml||'2') + ' ml</span>'
+    + (isAdmin ? '<div style="display:flex;gap:0.5rem;"><button class="btn-ghost btn-sm" onclick="editSample('+id+')">Editar</button><button class="btn-ghost btn-sm" style="color:var(--color-destructive);border-color:var(--color-destructive);" onclick="deleteSample('+id+',event)">Eliminar</button></div>' : '')
+    + '</div>'
+    + '<button class="btn-gold" style="width:100%;padding:0.875rem;" onclick="addSampleToCart('+id+');closePerfumeDrawer();">'
+    + '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>'
+    + 'Añadir al carrito</button>';
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('perfumeDrawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function editSample(id, e) {
+  if (e) e.stopPropagation();
+  if (!isAdmin) return;
+  _editingSamples = true;
+  editingId = id;
+  var p = samples.find(function(x){ return x.id===id; });
+  openEditModal(id);
+  // After modal is open, update title
+  setTimeout(function(){
+    var t = document.getElementById('editModalTitle');
+    var s = document.getElementById('editModalSub');
+    if (t) t.textContent = id ? 'Editar muestra' : 'Nueva muestra';
+    if (s) s.textContent = id ? 'Modifica los detalles' : 'Añade una muestra de prueba';
+  }, 50);
+}
+
+function deleteSample(id, e) {
+  if (e) e.stopPropagation();
+  if (!isAdmin) return;
+  var p = samples.find(function(x){ return x.id===id; });
+  var nombre = p ? p.brand + ' — ' + p.name : 'esta muestra';
+  if (!confirm('¿Eliminar muestra ' + nombre + '?')) return;
+  samples = samples.filter(function(x){ return x.id !== id; });
+  _deletedSampleIds2.add(id);
+  try { localStorage.setItem('qwc_deleted_sample_ids', JSON.stringify([..._deletedSampleIds2])); } catch(e2){}
+  saveSamples();
+  renderSamplesGrid();
+  showToast('Muestra eliminada', 'info');
+}
+
+// Also patch addToCart for sample cart items rendering
+var _origAddToCart = addToCart;
+// Override renderCart to handle sample items
+var _origRenderCart = renderCart;
+renderCart = function() {
+  // Patch perfumes lookup to also check samples
+  _origRenderCart();
+  // Fix sample items
+  cart.forEach(function(c) {
+    if (c._sampleId) {
+      var p = samples.find(function(x){ return x.id === c._sampleId; });
+      if (p) {
+        // Find the cart item element and update it
+        // (handled in next renderCart call which has access to samples)
+      }
+    }
+  });
+};
+
+// Override getCartTotal to handle samples
+var _origGetCartTotal = getCartTotal;
+getCartTotal = function() {
+  return cart.reduce(function(s, c) {
+    if (c._sampleId) {
+      var p = samples.find(function(x){ return x.id === c._sampleId; });
+      return s + (p ? parseFloat(p.price||0) : 0) * (c.qty||1);
+    }
+    var perf = perfumes.find(function(x){ return x.id === c.id; });
+    return s + (perf ? parseFloat(perf.price||0) : 0) * (c.qty||1);
+  }, 0);
+};
+
+// ════════════════════════════════════════════
+// ── USERS / PROFILE ──
+// ════════════════════════════════════════════
+const USERS_KEY = 'qwc_users_v1';
+const SESSION_USER_KEY = 'qwc_session_user';
+var currentUser = null;
+
+function getUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY)||'{}'); } catch(e){ return {}; } }
+function saveUsers(u) { try { localStorage.setItem(USERS_KEY, JSON.stringify(u)); } catch(e){} }
+
+function loadSession() {
+  try {
+    var email = localStorage.getItem(SESSION_USER_KEY);
+    if (email) {
+      var users = getUsers();
+      if (users[email]) { currentUser = users[email]; currentUser.email = email; }
+    }
+  } catch(e){}
+}
+
+function openProfile() {
+  renderProfileBody();
+  document.getElementById('profileOverlay').style.display = 'block';
+  document.getElementById('profileDrawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProfile() {
+  document.getElementById('profileOverlay').style.display = 'none';
+  document.getElementById('profileDrawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderProfileBody() {
+  var body = document.getElementById('profileBody');
+  if (!body) return;
+
+  if (currentUser) {
+    var initial = (currentUser.name||currentUser.email||'U')[0].toUpperCase();
+    var isAdminUser = currentUser.email.toLowerCase() === PEDIDOS_EMAIL.toLowerCase() || isAdmin;
+    var orderHistory = currentUser.orders || [];
+
+    var adminPedidosHtml = '';
+    if (isAdminUser) {
+      var unread = adminMsgs.filter(function(m){ return !m.read; }).length;
+      adminPedidosHtml = '<div class="profile-section">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">'
+        + '<div class="profile-section-title" style="margin-bottom:0;">Pedidos recibidos</div>'
+        + (unread > 0 ? '<span style="background:var(--color-destructive);color:white;font-size:0.7rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px;">' + unread + ' nuevos</span>' : '')
+        + '</div>'
+        + (adminMsgs.length === 0
+          ? '<p style="font-size:0.875rem;color:var(--color-muted-foreground);">No hay pedidos todavía.</p>'
+          : adminMsgs.slice(0, 10).map(function(m) {
+              return '<div class="profile-order-card ' + (m.read?'':'pedido-unread') + '" data-mid="' + m.id + '" onclick="markRead(this.dataset.mid);this.classList.remove(\'pedido-unread\');" style="cursor:pointer;">'
+                + '<div style="display:flex;justify-content:space-between;align-items:flex-start;">'
+                + '<div><div class="profile-order-date">' + m.from + '</div><div class="profile-order-date">' + m.timestamp + '</div></div>'
+                + (!m.read ? '<span style="background:var(--color-destructive);color:white;font-size:0.6rem;padding:0.1rem 0.4rem;border-radius:9999px;">Nuevo</span>' : '')
+                + '</div>'
+                + '<pre style="font-size:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.5;color:var(--color-dark-700);">' + m.content + '</pre>'
+                + '</div>';
+            }).join('')
+        )
+        + (adminMsgs.length > 0 ? '<button class="btn-ghost btn-sm" style="width:100%;margin-top:0.75rem;" onclick="navigateToAdmin(\'pedidos\');closeProfile();">Ver todos en Admin &rarr;</button>' : '')
+        + '</div>';
+    }
+
+    var myOrdersHtml = orderHistory.length > 0
+      ? orderHistory.slice().reverse().slice(0,5).map(function(o) {
+          return '<div class="profile-order-card">'
+            + '<div class="profile-order-date">' + new Date(o.date).toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'}) + '</div>'
+            + '<div class="profile-order-items">' + (o.items||[]).map(function(i){ return i.name; }).join(', ') + '</div>'
+            + '<div class="profile-order-total">' + parseFloat(o.total||0).toFixed(2) + ' €</div>'
+            + '</div>';
+        }).join('')
+      : '<p style="font-size:0.875rem;color:var(--color-muted-foreground);">Aún no has realizado pedidos.</p>';
+
+    body.innerHTML =
+      '<div class="profile-section">'
+      + '<div class="profile-user-row">'
+      + '<div class="profile-avatar">' + initial + '</div>'
+      + '<div><div class="profile-user-name">' + (currentUser.name||'Usuario') + '</div>'
+      + '<div class="profile-user-email">' + currentUser.email + '</div>'
+      + (isAdminUser ? '<div class="profile-user-badge"><svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Administrador</div>' : '')
+      + '</div></div></div>'
+      + '<div class="profile-section">'
+      + '<div class="profile-section-title">Mi cuenta</div>'
+      + '<div style="display:flex;flex-direction:column;gap:0.75rem;">'
+      + '<div><label class="form-label" for="pName">Nombre</label><input type="text" id="pName" class="form-input" value="' + (currentUser.name||'') + '" placeholder="Tu nombre"/></div>'
+      + '<div><label class="form-label" for="pEmail">Email</label><input type="text" id="pEmail" class="form-input" value="' + currentUser.email + '" disabled style="opacity:0.6;"/></div>'
+      + '<button class="btn-gold" style="width:100%;" onclick="saveProfileData()">Guardar cambios</button>'
+      + '</div></div>'
+      + adminPedidosHtml
+      + '<div class="profile-section">'
+      + '<div class="profile-section-title">Mis pedidos</div>'
+      + myOrdersHtml
+      + '</div>'
+      + '<div class="profile-section">'
+      + '<div class="profile-section-title">Ajustes</div>'
+      + '<div class="profile-settings-row"><div><div class="profile-settings-label">Notificaciones</div><div class="profile-settings-sub">Novedades y ofertas</div></div><label class="toggle-switch"><input type="checkbox" id="toggleNotif" ' + (currentUser.notif?'checked':'') + ' onchange="saveToggle(\'notif\',this.checked)"/><span class="toggle-slider"></span></label></div>'
+      + '<div class="profile-settings-row"><div><div class="profile-settings-label">Modo oscuro</div><div class="profile-settings-sub">Próximamente</div></div><label class="toggle-switch"><input type="checkbox" disabled/><span class="toggle-slider" style="opacity:0.4;"></span></label></div>'
+      + '</div>'
+      + '<div class="profile-section">'
+      + '<button class="btn-ghost" style="width:100%;color:var(--color-destructive);border-color:var(--color-destructive);" onclick="logoutUser()">Cerrar sesión</button>'
+      + '</div>';
+  } else {
+    // Not logged in — show login/register
+    body.innerHTML =
+      '<div class="profile-section" style="display:flex;flex-direction:column;align-items:center;gap:1rem;padding:3rem 1.25rem 1.25rem;">'
+      + '<div class="profile-avatar" style="width:5rem;height:5rem;font-size:2rem;">👤</div>'
+      + '<h3 style="font-family:var(--font-serif);font-size:1.5rem;font-weight:300;">Inicia sesión</h3>'
+      + '<p style="font-size:0.875rem;color:var(--color-muted-foreground);text-align:center;">Accede a tu perfil, historial de pedidos y ajustes personalizados.</p>'
+      + '</div>'
+      + '<div class="profile-section" id="profileAuthSection">'
+      + '<div class="profile-auth-form" id="loginForm">'
+      + '<div class="profile-section-title">Iniciar sesión</div>'
+      + '<div><label class="form-label" for="loginEmail">Email</label><input type="email" id="loginEmail" class="form-input" placeholder="tu@email.com"/></div>'
+      + '<div><label class="form-label" for="loginPwd">Contraseña</label><input type="password" id="loginPwd" class="form-input" placeholder="••••••••"/></div>'
+      + '<p id="loginError" style="display:none;color:var(--color-destructive);font-size:0.875rem;"></p>'
+      + '<button class="btn-gold" style="width:100%;" onclick="loginUser()">Entrar</button>'
+      + '<p style="font-size:0.875rem;text-align:center;color:var(--color-muted-foreground);">¿No tienes cuenta? <button style="background:none;border:none;cursor:pointer;color:var(--color-gold-600);font-size:0.875rem;" onclick="showRegisterForm()">Regístrate</button></p>'
+      + '</div></div>'
+      + '<div class="profile-section">'
+      + '<div class="profile-section-title">Ajustes generales</div>'
+      + '<div class="profile-settings-row"><div><div class="profile-settings-label">Modo oscuro</div><div class="profile-settings-sub">Próximamente</div></div><label class="toggle-switch"><input type="checkbox" disabled/><span class="toggle-slider" style="opacity:0.4;"></span></label></div>'
+      + '</div>';
+  }
+}
+
+function showRegisterForm() {
+  var section = document.getElementById('profileAuthSection');
+  if (!section) return;
+  section.innerHTML = '<div class="profile-auth-form">'
+    + '<div class="profile-section-title">Crear cuenta</div>'
+    + '<div><label class="form-label" for="regName">Nombre</label><input type="text" id="regName" class="form-input" placeholder="Tu nombre"/></div>'
+    + '<div><label class="form-label" for="regEmail">Email</label><input type="email" id="regEmail" class="form-input" placeholder="tu@email.com"/></div>'
+    + '<div><label class="form-label" for="regPwd">Contraseña</label><input type="password" id="regPwd" class="form-input" placeholder="Mínimo 6 caracteres"/></div>'
+    + '<p id="regError" style="display:none;color:var(--color-destructive);font-size:0.875rem;"></p>'
+    + '<button class="btn-gold" style="width:100%;" onclick="registerUser()">Crear cuenta</button>'
+    + '<p style="font-size:0.875rem;text-align:center;color:var(--color-muted-foreground);">¿Ya tienes cuenta? <button style="background:none;border:none;cursor:pointer;color:var(--color-gold-600);font-size:0.875rem;" onclick="renderProfileBody()">Inicia sesión</button></p>'
+    + '</div>';
+}
+
+function loginUser() {
+  var email = (document.getElementById('loginEmail').value||'').trim().toLowerCase();
+  var pwd   = (document.getElementById('loginPwd').value||'');
+  var errEl = document.getElementById('loginError');
+  if (!email||!pwd) { errEl.textContent='Rellena todos los campos.'; errEl.style.display='block'; return; }
+  var users = getUsers();
+  if (!users[email] || users[email].pwd !== pwd) {
+    errEl.textContent='Email o contraseña incorrectos.'; errEl.style.display='block'; return;
+  }
+  currentUser = users[email]; currentUser.email = email;
+  localStorage.setItem(SESSION_USER_KEY, email);
+  // Check if admin email
+  if (email === PEDIDOS_EMAIL.toLowerCase()) {
+    isAdmin = true; sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('adminBtn').style.display = 'inline-flex';
+    document.getElementById('pedidosBtn').style.display = 'inline-flex';
+    startMessagesPoll();
+  }
+  renderProfileBody();
+  showToast('Bienvenido/a, ' + (currentUser.name||email) + ' ✓', 'success');
+}
+
+function registerUser() {
+  var name  = (document.getElementById('regName').value||'').trim();
+  var email = (document.getElementById('regEmail').value||'').trim().toLowerCase();
+  var pwd   = (document.getElementById('regPwd').value||'');
+  var errEl = document.getElementById('regError');
+  if (!name||!email||!pwd) { errEl.textContent='Rellena todos los campos.'; errEl.style.display='block'; return; }
+  if (pwd.length < 6) { errEl.textContent='La contraseña debe tener al menos 6 caracteres.'; errEl.style.display='block'; return; }
+  var users = getUsers();
+  if (users[email]) { errEl.textContent='Ya existe una cuenta con ese email.'; errEl.style.display='block'; return; }
+  users[email] = { name, pwd, orders: [], notif: false };
+  saveUsers(users);
+  currentUser = users[email]; currentUser.email = email;
+  localStorage.setItem(SESSION_USER_KEY, email);
+  renderProfileBody();
+  showToast('Cuenta creada y sesión iniciada ✓', 'success');
+}
+
+function logoutUser() {
+  currentUser = null;
+  localStorage.removeItem(SESSION_USER_KEY);
+  if (isAdmin) { isAdmin = false; sessionStorage.removeItem(SESSION_KEY); }
+  document.getElementById('adminBtn').style.display = 'none';
+  document.getElementById('pedidosBtn').style.display = 'none';
+  renderProfileBody();
+  showToast('Sesión cerrada', 'info');
+}
+
+function saveProfileData() {
+  if (!currentUser) return;
+  var name = (document.getElementById('pName').value||'').trim();
+  currentUser.name = name;
+  var users = getUsers();
+  users[currentUser.email] = Object.assign({}, users[currentUser.email], { name });
+  saveUsers(users);
+  showToast('Perfil actualizado ✓', 'success');
+}
+
+function saveToggle(key, val) {
+  if (!currentUser) return;
+  currentUser[key] = val;
+  var users = getUsers();
+  users[currentUser.email][key] = val;
+  saveUsers(users);
+}
+
 </script>
 </body>
 </html>
