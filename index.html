@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>QwinCop — Perfumería de Autor</title>
-  <meta name="description" content="Más de 270 fragancias de lujo a precios accesibles. Encuentra tu fragancia perfecta."/>
+  <meta name="description" content="Más de 270 perfumes de lujo a precios accesibles. Encuentra tu perfume perfecto."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
@@ -239,6 +239,17 @@ input, textarea, select { font-family: var(--font-sans); }
 }
 .btn-ghost:hover { background: var(--color-cream-100); border-color: var(--color-gold-400); }
 .btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-buy-now {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: var(--color-dark-900);
+  color: white; font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: var(--radius);
+  cursor: pointer; transition: filter 150ms, transform 100ms;
+}
+.btn-buy-now:hover { filter: brightness(1.3); }
+.btn-buy-now:active { transform: scale(0.97); }
+.btn-buy-now:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
 
 /* ── ADD TO CART MINI BTN ── */
@@ -620,7 +631,7 @@ textarea.form-input { resize: none; }
   <div class="cart-header">
     <div class="cart-header-left">
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--color-gold-500)"><path stroke-linecap="round" stroke-linejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
-      <h2 class="cart-title">Tu carrito</h2>
+      <h2 class="cart-title" id="cartTitleText">Tu carrito</h2>
       <span class="cart-count-badge" id="cartCountBadge" style="display:none"></span>
     </div>
     <button class="icon-btn" id="cartClose" aria-label="Cerrar carrito">
@@ -634,7 +645,7 @@ textarea.form-input { resize: none; }
       <span class="cart-total-amount" id="cartTotal">0.00 €</span>
     </div>
     <button class="btn-gold" style="width:100%;padding:0.75rem;" onclick="checkoutCart()">Proceder al pago</button>
-    <button class="btn-ghost" style="width:100%;font-size:0.75rem;" onclick="clearCart()">
+    <button class="btn-ghost" id="clearCartBtn" style="width:100%;font-size:0.75rem;" onclick="clearCart()">
       <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
       Vaciar carrito
     </button>
@@ -726,7 +737,7 @@ textarea.form-input { resize: none; }
     <div class="container text-center">
       <p class="hero-label fade-up">Perfumería de Autor</p>
       <h1 class="hero-title fade-up stagger-1">QwinCop</h1>
-      <p class="hero-sub fade-up stagger-2">Más de 270 fragancias de lujo a precios accesibles.<br>Encuentra tu fragancia perfecta.</p>
+      <p class="hero-sub fade-up stagger-2">Más de <span id="heroPerfumeCount">270</span> perfumes de lujo a precios accesibles.<br>Encuentra tu perfume perfecto.</p>
       <div class="divider-gold fade-up stagger-3"></div>
     </div>
   </section>
@@ -747,7 +758,7 @@ textarea.form-input { resize: none; }
       <div class="container">
         <span class="samples-hero-label">Descubre antes de invertir</span>
         <h2 class="samples-hero-title">Muestras de <em>Prueba</em></h2>
-        <p class="samples-hero-sub">Fragancias de lujo · desde €2</p>
+        <p class="samples-hero-sub">Perfumes de lujo · desde €2</p>
       </div>
     </div>
     <div class="samples-pills" style="margin-bottom:1.5rem;">
@@ -777,7 +788,7 @@ textarea.form-input { resize: none; }
       <div class="filters-bar">
         <div class="filters-top">
           <div class="results-count">
-            <span id="resultsCount"><strong id="resultsNum">0</strong> fragancias</span>
+            <span id="resultsCount"><strong id="resultsNum">0</strong> perfumes</span>
             <button class="clear-filters-btn" id="clearFiltersBtn" onclick="clearAllFilters()" style="display:none" aria-label="Limpiar todos los filtros">
               <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
               Limpiar filtros
@@ -857,7 +868,7 @@ textarea.form-input { resize: none; }
   <footer class="site-footer" role="contentinfo">
     <div class="container">
       <p class="footer-title">© <span id="footerYear"></span> QwinCop Perfumería de Autor</p>
-      <p class="footer-sub">Más de 270 fragancias de lujo a precios accesibles</p>
+      <p class="footer-sub">Más de <span id="footerPerfumeCount">270</span> perfumes de lujo a precios accesibles</p>
     </div>
   </footer>
 
@@ -987,7 +998,7 @@ const DEFAULTS=[
     heart:'Lavanda, Iris',
     base:'Vainilla, Notas Orientales, Madera',
     desc:'La version mas oscura e intensa del clasico marinero.',
-    descLong:'Le Male Le Parfum lleva el ADN original a su forma mas intensa. Cardamomo especiado, iris empolvado y vainilla profunda crean una fragancia nocturna de alta concentracion que dura toda la noche.',
+    descLong:'Le Male Le Parfum lleva el ADN original a su forma mas intensa. Cardamomo especiado, iris empolvado y vainilla profunda crean un perfume nocturno de alta concentracion que dura toda la noche.',
     reviews:[]
   },
   {
@@ -1122,7 +1133,7 @@ const DEFAULTS=[
     heart:'Rosa Negra',
     base:'Miel Oscura, Pachuli, Notas Ahumadas',
     desc:'Scandal despues de medianoche. Oscuro, ahumado e hipnotico.',
-    descLong:'Scandal By Night lleva el escandalo al extremo nocturno. Gardenia negra, miel oscura y ahumado misterioso crean una fragancia para los secretos y las noches sin final.',
+    descLong:'Scandal By Night lleva el escandalo al extremo nocturno. Gardenia negra, miel oscura y ahumado misterioso crean un perfume para los secretos y las noches sin final.',
     reviews:[]
   },
   {
@@ -1137,7 +1148,7 @@ const DEFAULTS=[
     heart:'Mimosa, Menta',
     base:'Pachuli Blanco',
     desc:'Scandal de dia. Ligera, juguetona y alegre.',
-    descLong:'Scandal a Paris captura el espiritu desenfadado de Paris. Mimosa, lima y menta crean una fragancia diurna vibrante con el caracter travieso de Scandal en clave fresca y primaveral.',
+    descLong:'Scandal a Paris captura el espiritu desenfadado de Paris. Mimosa, lima y menta crean un perfume diurno vibrante con el caracter travieso de Scandal en clave fresca y primaveral.',
     reviews:[]
   },
   {
@@ -1302,7 +1313,7 @@ const DEFAULTS=[
     heart:'Lavanda, Flor de Naranjo, Jazmin',
     base:'Vainilla Madagascar, Almizcle, Cedro, Ambar',
     desc:'Libre de todo. Lavanda y vainilla en clave femenina y libre.',
-    descLong:'Libre rompe los esquemas de genero con lavanda fougere en clave femenina. Mandarina chispeante, flor de naranjo y vainilla de Madagascar. Fragancia de mujer libre, confiada e independiente.',
+    descLong:'Libre rompe los esquemas de genero con lavanda fougere en clave femenina. Mandarina chispeante, flor de naranjo y vainilla de Madagascar. Perfume de mujer libre, confiada e independiente.',
     reviews:[]
   },
   {
@@ -1332,7 +1343,7 @@ const DEFAULTS=[
     heart:'Salvia, Jengibre',
     base:'Cedro, Ambar, Almizcle',
     desc:'El Y de YSL. Manzana especiada, cedro limpio y elegancia moderna.',
-    descLong:'Y EDP es la fragancia del hombre YSL moderno. Manzana brillante y bergamota, salvia y jengibre especiados, cedro y ambar calidos. Una fragancia masculina completa y elegante.',
+    descLong:'Y EDP es el perfume del hombre YSL moderno. Manzana brillante y bergamota, salvia y jengibre especiados, cedro y ambar calidos. Un perfume masculino completo y elegante.',
     reviews:[]
   },
   {
@@ -1497,7 +1508,7 @@ const DEFAULTS=[
     heart:'Madera de Oud, Clavo',
     base:'Cuero, Tabaco, Ambar, Pachuli',
     desc:'1 Million en version oscura, amaderada y misteriosa.',
-    descLong:'1 Million Prive: especias calidas, madera de oud y tabaco crean una fragancia nocturna de gran profundidad y misterio. La version mas oscura del lingote de oro.',
+    descLong:'1 Million Prive: especias calidas, madera de oud y tabaco crean un perfume nocturno de gran profundidad y misterio. La version mas oscura del lingote de oro.',
     reviews:[]
   },
   {
@@ -1572,7 +1583,7 @@ const DEFAULTS=[
     heart:'Pimienta Rosa, Jazmin, Violeta, Praline',
     base:'Tonka Bean, Cedro, Ambergris, Musgo',
     desc:'Fuego tropical. Mango jugoso, jengibre y praline explosivos.',
-    descLong:'Vulcan Feu es una erupcion de mango tropical y jengibre que arde con praline y tonka. Fragancia unisex de French Avenue que arrasa en compliments por su combinacion de frutas exoticas y base gourmand.',
+    descLong:'Vulcan Feu es una erupcion de mango tropical y jengibre que arde con praline y tonka. Perfume unisex de French Avenue que arrasa en compliments por su combinacion de frutas exoticas y base gourmand.',
     reviews:[]
   },
   {
@@ -1895,7 +1906,7 @@ const DEFAULTS=[
     heart:'Laurel, Jazmin, Hedione',
     base:'Madera de Guayaco, Ambar, Almizcle, Oakmoss',
     desc:'El campeon. Fresco, marino y arrolladoramente masculino.',
-    descLong:'Invictus es la fragancia del vencedor. Pomelo chispeante y notas marinas abren laurel y jazmin sobre madera de guayaco y ambar. Uno de los perfumes masculinos mas vendidos del mundo desde 2013.',
+    descLong:'Invictus es el perfume del vencedor. Pomelo chispeante y notas marinas abren laurel y jazmin sobre madera de guayaco y ambar. Uno de los perfumes masculinos mas vendidos del mundo desde 2013.',
     reviews:[]
   },
   {
@@ -2124,7 +2135,7 @@ const DEFAULTS=[
     heart:'Rosa, Incienso, Oud',
     base:'Pachuli, Ambar, Almizcle',
     desc:'La noche de Vulcan. Rosa y oud de gran intensidad nocturna.',
-    descLong:'Vulcan Nuit es la fragancia nocturna por excelencia de French Avenue. Rosa profunda y oud se funden con pachuli e incienso sobre ambar calido. Misterioso, elegante y de excepcional calidad para su precio.',
+    descLong:'Vulcan Nuit es el perfume nocturno por excelencia de French Avenue. Rosa profunda y oud se funden con pachuli e incienso sobre ambar calido. Misterioso, elegante y de excepcional calidad para su precio.',
     reviews:[]
   },
 
@@ -2158,7 +2169,7 @@ const DEFAULTS=[
     heart:'Lavanda, Romero, Geranio',
     base:'Cedro Atlas, Ambar, Almizcle',
     desc:'La libertad de la carretera. Fresco, limpio y con alma aventurera.',
-    descLong:'Sur La Route captura el espiritu del viaje. Citricos brillantes y lavanda fresca sobre cedro y ambar calido. Una fragancia para quienes siempre tienen el horizonte en mente.',
+    descLong:'Sur La Route captura el espiritu del viaje. Citricos brillantes y lavanda fresca sobre cedro y ambar calido. Un perfume para quienes siempre tienen el horizonte en mente.',
     reviews:[]
   }
   ,{
@@ -2188,7 +2199,7 @@ const DEFAULTS=[
     heart:'Oud, Rosa Bulgara, Incienso',
     base:'Geranio, Ambar Oscuro, Madera Ahumada',
     desc:'Oud de alta costura. El nomada que conquista la noche.',
-    descLong:'Ombre Nomade es una de las fragancias de oud mas celebradas del lujo. Rosa bulgara e incienso abrazan un oud de extraordinaria calidad sobre ambar y madera ahumada. Monumentalmente elegante.',
+    descLong:'Ombre Nomade es uno de los perfumes de oud mas celebrados del lujo. Rosa bulgara e incienso abrazan un oud de extraordinaria calidad sobre ambar y madera ahumada. Monumentalmente elegante.',
     reviews:[]
   }
   ,{
@@ -2233,7 +2244,7 @@ const DEFAULTS=[
     heart:'Rosa, Iris, Ylang-Ylang',
     base:'Santal, Ambar, Almizcle Blanco',
     desc:'El dia que amanece. Fresco floral para empezar el dia con elegancia.',
-    descLong:'Le Jour Se Leve captura la belleza del amanecer. Citricos y pimienta rosa abren iris y rosa sobre santal y ambar. La fragancia para recibir el nuevo dia con clase.',
+    descLong:'Le Jour Se Leve captura la belleza del amanecer. Citricos y pimienta rosa abren iris y rosa sobre santal y ambar. El perfume para recibir el nuevo dia con clase.',
     reviews:[]
   }
   ,{
@@ -2263,7 +2274,7 @@ const DEFAULTS=[
     heart:'Rosa, Magnolia, Flor de Naranjo',
     base:'Vainilla, Benjui, Almizcle Calido',
     desc:'Pegada a ti. Vainilla y flores en un abrazo calido irresistible.',
-    descLong:'Contre Moi es la fragancia del abrazo. Flores luminosas sobre vainilla y benjui de extraordinaria calidez. El gourmand floral de LV que nunca quieres que se vaya.',
+    descLong:'Contre Moi es el perfume del abrazo. Flores luminosas sobre vainilla y benjui de extraordinaria calidez. El gourmand floral de LV que nunca quieres que se vaya.',
     reviews:[]
   }
 
@@ -2280,7 +2291,7 @@ const DEFAULTS=[
     heart:'Lavanda Acuatica, Geranio',
     base:'Cedro, Ambar Frio, Almizcle',
     desc:'El Hawas bajo cero. Frescura glacial con el ADN arrollador de Rasasi.',
-    descLong:'Hawas Ice toma la potencia del Hawas original y la enfria al limite. Menta helada y limon explosivos sobre lavanda acuatica y cedro frio. La fragancia del verano sin piedad.',
+    descLong:'Hawas Ice toma la potencia del Hawas original y la enfria al limite. Menta helada y limon explosivos sobre lavanda acuatica y cedro frio. El perfume del verano sin piedad.',
     reviews:[]
   },
 
@@ -2297,7 +2308,7 @@ const DEFAULTS=[
     heart:'Te Verde, Aloe Vera, Notas Marinas',
     base:'Cedro, Almizcle Marino, Ambar Frio',
     desc:'El Pacifico en un frasco. Frescura glacial y oleaje tropical.',
-    descLong:'Pacific Chill evoca las olas frias del oceano Pacifico con yuzu brillante y menta glacial sobre te verde y aloe vera. Cedro limpio y almizcle marino en la base. La fragancia del surf de lujo segun Louis Vuitton.',
+    descLong:'Pacific Chill evoca las olas frias del oceano Pacifico con yuzu brillante y menta glacial sobre te verde y aloe vera. Cedro limpio y almizcle marino en la base. El perfume del surf de lujo segun Louis Vuitton.',
     reviews:[]
   },
   {
@@ -2359,7 +2370,7 @@ const DEFAULTS=[
     heart:'Iris de Florencia, Violeta',
     base:'Sandalo, Ambergris, Almizcle',
     desc:'El clasico irlandes. Verde, fresco e intemporal desde 1985.',
-    descLong:'Green Irish Tweed es la fragancia que inspiró a Davidoff para crear Cool Water. Verbena francesa y menta verde sobre iris de Florencia y violeta, con sandalo y ambergris en la base. Un monumento olfativo a la naturaleza irlandesa.',
+    descLong:'Green Irish Tweed es el perfume que inspiró a Davidoff para crear Cool Water. Verbena francesa y menta verde sobre iris de Florencia y violeta, con sandalo y ambergris en la base. Un monumento olfativo a la naturaleza irlandesa.',
     reviews:[]
   },
   {
@@ -2450,7 +2461,7 @@ const DEFAULTS=[
     heart:'Lavanda, Menta, Geranio',
     base:'Sandalo, Almizcle, Ambar, Oud',
     desc:'El marino oriental. Fresco, especiado y con una bestia de duracion.',
-    descLong:'Hawas es la fragancia estrella de Rasasi. Marino y especiado con cardamomo y canela sobre sandalo y oud en la base. Calidad orientalista excepcional por una fraccion del precio de las marcas europeas.',
+    descLong:'Hawas es el perfume estrella de Rasasi. Marino y especiado con cardamomo y canela sobre sandalo y oud en la base. Calidad orientalista excepcional por una fraccion del precio de las marcas europeas.',
     reviews:[]
   },{
     id:119, emoji:'🌹', photo:null,
@@ -2463,7 +2474,7 @@ const DEFAULTS=[
     heart:'Rosa, Jazmin, Oud',
     base:'Sandalo, Ambar, Almizcle Oscuro',
     desc:'No te rindes. Floral oriental con oud y madera de gran categoria.',
-    descLong:'La Yuqawam significa "el que no se rinde" en arabe. Bergamota y neroli dan paso a rosa y jazmin sobre oud y sandalo. Una de las fragancias mas queridas de Rasasi con proyeccion y duracion sobresalientes.',
+    descLong:'La Yuqawam significa "el que no se rinde" en arabe. Bergamota y neroli dan paso a rosa y jazmin sobre oud y sandalo. Uno de los perfumes mas queridos de Rasasi con proyeccion y duracion sobresalientes.',
     reviews:[]
   },{
     id:120, emoji:'🔥', photo:null,
@@ -2476,7 +2487,7 @@ const DEFAULTS=[
     heart:'Rosa, Oud, Cuero',
     base:'Ambar, Resina, Pachuli, Incienso',
     desc:'Simbolos de Rasasi. Azafran, cuero y oud de puro lujo oriental.',
-    descLong:'Rumz Al Rasasi es la expresion mas lujosa de la casa. Azafran real sobre cuero y oud con incienso y resina en la base. Una fragancia de gran presencia y longevidad bestial que compite con oud de tres cifras.',
+    descLong:'Rumz Al Rasasi es la expresion mas lujosa de la casa. Azafran real sobre cuero y oud con incienso y resina en la base. Un perfume de gran presencia y longevidad bestial que compite con oud de tres cifras.',
     reviews:[]
   },{
     id:121, emoji:'🌿', photo:null,
@@ -2531,7 +2542,7 @@ const DEFAULTS=[
     heart:'Rosa, Oud, Cuero',
     base:'Ambar, Pachuli, Incienso, Almizcle',
     desc:'Oud para la gloria. La apuesta mas ambiciosa de Lattafa.',
-    descLong:'Oud For Glory es la fragancia insignia de Lattafa. Azafran y rosa sobre oud profundo y cuero con base de ambar e incienso. Proyeccion brutal y longevidad de doce horas. Lujo oriental democratico en su forma mas pura.',
+    descLong:'Oud For Glory es el perfume insignia de Lattafa. Azafran y rosa sobre oud profundo y cuero con base de ambar e incienso. Proyeccion brutal y longevidad de doce horas. Lujo oriental democratico en su forma mas pura.',
     reviews:[]
   },{
     id:125, emoji:'🍯', photo:null,
@@ -2609,7 +2620,7 @@ const DEFAULTS=[
     heart:'Oud, Cuero, Incienso',
     base:'Sandalo, Ambar, Almizcle',
     desc:'El estado de animo del oud. Oscuro, profundo y magnetico.',
-    descLong:'Oud Mood captura la esencia del oud en toda su intensidad. Rosa y bergamota ligeras abren oud y cuero sobre incienso y sandalo. Una fragancia de gran caracter para quienes quieren explorar el mundo del oud a bajo precio.',
+    descLong:'Oud Mood captura la esencia del oud en toda su intensidad. Rosa y bergamota ligeras abren oud y cuero sobre incienso y sandalo. Un perfume de gran caracter para quienes quieren explorar el mundo del oud a bajo precio.',
     reviews:[]
   },{
     id:131, emoji:'⭐', photo:null,
@@ -2703,7 +2714,7 @@ const DEFAULTS=[
     heart:'Cedro Atlas, Sandalo',
     base:'Vetiver, Pachuli, Ambar, Almizcle',
     desc:'El bosque del volcan. Maderas nobles y atemporales.',
-    descLong:'Vulcan Bois es la fragancia amaderada pura de French Avenue. Cedro Atlas y sandalo sobre vetiver y pachuli terminando en ambar. Elegante, sobrio y masculino — para los que prefieren las maderas sobre cualquier cosa.',
+    descLong:'Vulcan Bois es el perfume amaderado puro de French Avenue. Cedro Atlas y sandalo sobre vetiver y pachuli terminando en ambar. Elegante, sobrio y masculino — para los que prefieren las maderas sobre cualquier cosa.',
     reviews:[]
   },
 
@@ -2716,7 +2727,7 @@ const DEFAULTS=[
     notes:['Bergamota','Jengibre','Rosa','Vetiver','Sandalo','Almizcle'],
     top:'Bergamota, Jengibre', heart:'Rosa, Iris', base:'Vetiver, Sandalo, Almizcle',
     desc:'El dúo. Unisex de JPG para los que no siguen normas.',
-    descLong:'Gaultier2 es el perfume unisex mas atrevido de Jean Paul Gaultier. Bergamota y jengibre sobre rosa e iris terminando en vetiver y sandalo. Creado como fragancia para dos, perfecta para cualquier genero y momento.',
+    descLong:'Gaultier2 es el perfume unisex mas atrevido de Jean Paul Gaultier. Bergamota y jengibre sobre rosa e iris terminando en vetiver y sandalo. Creado como perfume para dos, perfecto para cualquier genero y momento.',
     reviews:[]
   },{
     id:139, emoji:'🖤', photo:null, brand:'Jean Paul Gaultier', name:'Kokorico EDT',
@@ -2792,7 +2803,7 @@ const DEFAULTS=[
     notes:['Bergamota','Clavel','Jazmin','Rosa','Incienso','Sandalo','Pachuli','Vainilla'],
     top:'Bergamota, Clavo, Mandarina', heart:'Clavel, Rosa, Jazmin, Loto', base:'Incienso, Sandalo, Pachuli, Vainilla, Ambar',
     desc:'El orientalismo de YSL. Opulento, misterioso e intemporal desde 1977.',
-    descLong:'Opium es una de las fragancias mas icónicas de la historia de la perfumeria. Especias orientales y florales exuberantes sobre incienso y vainilla. Controvertido en su lanzamiento, ahora es un monumento olfativo de la casa YSL.',
+    descLong:'Opium es uno de los perfumes mas icónicos de la historia de la perfumeria. Especias orientales y florales exuberantes sobre incienso y vainilla. Controvertido en su lanzamiento, ahora es un monumento olfativo de la casa YSL.',
     reviews:[]
   },{
     id:146, emoji:'✨', photo:null, brand:'Yves Saint Laurent', name:'Cinema EDP',
@@ -2987,7 +2998,7 @@ const DEFAULTS=[
     notes:['Azafran','Rosa','Oud','Sandalo','Ambar','Resina','Incienso'],
     top:'Bergamota, Azafran', heart:'Rosa, Oud, Incienso', base:'Sandalo, Ambar, Resina, Almizcle',
     desc:'Cruz del Sur. Oud y azafran de lujo absoluto con alma italiana.',
-    descLong:'Cruz del Sur lleva el nombre de la constelacion austral. Azafran y rosa sobre oud y sandalo con base de ambar y resina. Una de las fragancias mas lujosas de Xerjoff, para noches que merecen lo extraordinario.',
+    descLong:'Cruz del Sur lleva el nombre de la constelacion austral. Azafran y rosa sobre oud y sandalo con base de ambar y resina. Uno de los perfumes mas lujosos de Xerjoff, para noches que merecen lo extraordinario.',
     reviews:[]
   },{
     id:164, emoji:'🏛️', photo:null, brand:'Xerjoff', name:'Casamorati Lira EDP',
@@ -2997,7 +3008,7 @@ const DEFAULTS=[
     notes:['Bergamota','Rosa','Iris','Sandalo','Vainilla','Almizcle'],
     top:'Bergamota, Mandarina', heart:'Rosa, Iris, Geranio', base:'Sandalo, Vainilla, Almizcle',
     desc:'Lira de Casamorati. Floral amaderado de elegancia boloñesa.',
-    descLong:'Casamorati Lira es la interpretacion de la linea historica de la fragancia Lira. Rosa e iris sobre sandalo y vainilla. Mas suave y clasica que la Lira de la linea principal, perfecta para el uso diario con un toque de lujo historico.',
+    descLong:'Casamorati Lira es la interpretacion de la linea historica del perfume Lira. Rosa e iris sobre sandalo y vainilla. Mas suave y clasica que la Lira de la linea principal, perfecta para el uso diario con un toque de lujo historico.',
     reviews:[]
   },{
     id:165, emoji:'🌺', photo:null, brand:'Xerjoff', name:'Casamorati Fiore dArangio EDP',
@@ -3017,7 +3028,7 @@ const DEFAULTS=[
     notes:['Mora','Rosa','Violeta','Sandalo','Almizcle','Ambar'],
     top:'Mora, Frambuesa, Bergamota', heart:'Rosa, Violeta, Lirio', base:'Sandalo, Almizcle, Ambar',
     desc:'El ramo ideal. Frutas oscuras y flores sobre sándalo cremoso.',
-    descLong:'Bouquet Ideale es la fragancia mas romantica de Casamorati. Mora y frambuesa abren rosa y violeta sobre sandalo cremoso y almizcle. Como recibir el ramo de flores perfecto de la persona que amas.',
+    descLong:'Bouquet Ideale es el perfume mas romantico de Casamorati. Mora y frambuesa abren rosa y violeta sobre sandalo cremoso y almizcle. Como recibir el ramo de flores perfecto de la persona que amas.',
     reviews:[]
   },{
     id:167, emoji:'🕯️', photo:null, brand:'Xerjoff', name:'Casamorati Regio EDP',
@@ -3047,7 +3058,7 @@ const DEFAULTS=[
     notes:['Bergamota','Cardamomo','Cedro','Vetiver','Oud','Ambar','Almizcle'],
     top:'Bergamota, Cardamomo, Pimienta', heart:'Cedro, Iris, Geranio', base:'Oud, Vetiver, Ambar, Almizcle',
     desc:'17/17 Homme. Aromatico de lujo con oud para el hombre de verdad.',
-    descLong:'XJ 17/17 Stone Label Homme es la fragancia aromatica de mayor lujo de Xerjoff. Cardamomo y bergamota sobre cedro e iris terminando en oud y vetiver. Potente, elegante y con una longevidad extraordinaria que justifica su posicion en la alta perfumeria.',
+    descLong:'XJ 17/17 Stone Label Homme es el perfume aromatico de mayor lujo de Xerjoff. Cardamomo y bergamota sobre cedro e iris terminando en oud y vetiver. Potente, elegante y con una longevidad extraordinaria que justifica su posicion en la alta perfumeria.',
     reviews:[]
   },{
     id:170, emoji:'💎', photo:null, brand:'Xerjoff', name:'XJ 17/17 Stone Label Homme Elle EDP',
@@ -3117,7 +3128,7 @@ const DEFAULTS=[
     notes:['Azafran','Rosa','Oud','Cuero','Sandalo','Ambar','Incienso'],
     top:'Bergamota, Azafran, Cardamomo', heart:'Rosa, Oud, Cuero', base:'Sandalo, Ambar, Incienso, Almizcle',
     desc:'Don. El oriental más suntuoso y poderoso de toda la casa Xerjoff.',
-    descLong:'Don es la fragancia de mayor caracter de Xerjoff. Azafran y cardamomo sobre rosa, oud y cuero terminando en incienso y ambar. Para el Don — el hombre que llega a una sala y todos lo notan sin necesidad de presentarse.',
+    descLong:'Don es el perfume de mayor caracter de Xerjoff. Azafran y cardamomo sobre rosa, oud y cuero terminando en incienso y ambar. Para el Don — el hombre que llega a una sala y todos lo notan sin necesidad de presentarse.',
     reviews:[]
   }
   ,{
@@ -3262,7 +3273,7 @@ const DEFAULTS=[
     notes:['Oud','Rosa','Azafran','Sandalo','Cuero','Resina','Ambar'],
     top:'Bergamota, Azafran, Rosa', heart:'Oud Laosiano, Cuero, Incienso', base:'Sandalo, Resina, Ambar Negro, Almizcle',
     desc:'La tercera Alejandría. Oud de Laos y azafrán para la noche eterna.',
-    descLong:'Alexandria III es el capitulo mas oscuro y lujoso de la trilogia. Oud de Laos con azafran y rosa sobre cuero e incienso terminando en resina y ambar negro. Una fragancia de proyeccion absoluta y longevidad de leyenda.',
+    descLong:'Alexandria III es el capitulo mas oscuro y lujoso de la trilogia. Oud de Laos con azafran y rosa sobre cuero e incienso terminando en resina y ambar negro. Un perfume de proyeccion absoluta y longevidad de leyenda.',
     reviews:[]
   },{
     id:190, emoji:'🌿', photo:null,
@@ -3317,13 +3328,13 @@ const DEFAULTS=[
   ,{id:205,emoji:'⏰',photo:null,brand:'Afnan',name:'9am Dive EDP',concentration:'Eau de Parfum',price:'20',year:'2020',nose:'',family:'Floral Acuatica',occasion:'Dia, trabajo, primavera',season:'Primavera / Verano',duration:'6-8 horas',sillage:'Moderada',notes:['Bergamota','Limon','Notas Acuaticas','Jazmin','Almizcle','Cedro'],top:'Bergamota, Limon, Notas Acuaticas',heart:'Jazmin, Freesia',base:'Cedro, Almizcle, Ambar',desc:'9AM se zambulle. La versión aquática y fresca del 9AM.',descLong:'9am Dive toma el femenino frutal del 9am y lo lleva al agua. Bergamota y limon con notas acuaticas sobre jazmin y freesia terminando en cedro y almizcle. La Afnan mas fresca y veraniega para ella.',reviews:[]}
 
   // ── FRENCH AVENUE (nuevos) ──
-  ,{id:206,emoji:'🤍',photo:null,brand:'French Avenue',name:'Aromatix Platine Blac EDP',concentration:'Eau de Parfum',price:'36',year:'2025',nose:'',family:'Aromatica Citrica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Lima','Limon','Bergamota','Menta','Cedro','Almizcle'],top:'Lima, Limon, Bergamota',heart:'Menta, Cedro, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Aromatix en platino y negro. Citrico fresco con elegancia extrema.',descLong:'Aromatix Platine Blac es la fragancia mas fresca y citrica de la linea Aromatix de French Avenue. Lima y limon explosivos sobre menta y cedro terminando en almizcle y vetiver. El Vulcan para los amantes de los citricos puros.',reviews:[]}
+  ,{id:206,emoji:'🤍',photo:null,brand:'French Avenue',name:'Aromatix Platine Blac EDP',concentration:'Eau de Parfum',price:'36',year:'2025',nose:'',family:'Aromatica Citrica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Lima','Limon','Bergamota','Menta','Cedro','Almizcle'],top:'Lima, Limon, Bergamota',heart:'Menta, Cedro, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Aromatix en platino y negro. Citrico fresco con elegancia extrema.',descLong:'Aromatix Platine Blac es el perfume mas fresco y citrico de la linea Aromatix de French Avenue. Lima y limon explosivos sobre menta y cedro terminando en almizcle y vetiver. El Vulcan para los amantes de los citricos puros.',reviews:[]}
   ,{id:207,emoji:'💎',photo:null,brand:'French Avenue',name:'Aromatix Or EDP',concentration:'Eau de Parfum',price:'36',year:'2025',nose:'',family:'Aromatica Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'8-10 horas',sillage:'Moderada-Intensa',notes:['Bergamota','Cardamomo','Cedro','Sandalo','Ambar','Almizcle'],top:'Bergamota, Cardamomo',heart:'Cedro, Iris',base:'Sandalo, Ambar, Almizcle',desc:'Aromatix de oro. El aromatico amaderado más lujoso de French Avenue.',descLong:'Aromatix Or es el aromatico mas rico y amaderado de la linea Aromatix. Bergamota y cardamomo sobre cedro e iris terminando en sandalo y ambar. La expresion mas clasica y elegante de French Avenue.',reviews:[]}
-  ,{id:208,emoji:'🔷',photo:null,brand:'French Avenue',name:'Vulcan Kyv EDP',concentration:'Eau de Parfum',price:'35',year:'2025',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-8 horas',sillage:'Moderada',notes:['Bergamota','Notas Acuaticas','Cedro','Almizcle','Ambar'],top:'Bergamota, Notas Acuaticas, Menta',heart:'Cedro, Iris, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Vulcan Kyv. El marino más fresco de la saga Vulcan.',descLong:'Vulcan Kyv es la fragancia acuatica y fresca de la linea Vulcan de French Avenue. Bergamota y notas acuaticas sobre cedro e iris terminando en almizcle y ambar. Limpio, fresco y con la calidad de French Avenue.',reviews:[]}
+  ,{id:208,emoji:'🔷',photo:null,brand:'French Avenue',name:'Vulcan Kyv EDP',concentration:'Eau de Parfum',price:'35',year:'2025',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-8 horas',sillage:'Moderada',notes:['Bergamota','Notas Acuaticas','Cedro','Almizcle','Ambar'],top:'Bergamota, Notas Acuaticas, Menta',heart:'Cedro, Iris, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Vulcan Kyv. El marino más fresco de la saga Vulcan.',descLong:'Vulcan Kyv es el perfume acuatico y fresco de la linea Vulcan de French Avenue. Bergamota y notas acuaticas sobre cedro e iris terminando en almizcle y ambar. Limpio, fresco y con la calidad de French Avenue.',reviews:[]}
 
   // ── KHADLAJ ──
   ,{id:209,emoji:'🏝️',photo:null,brand:'Khadlaj',name:'Island Dreams EDP',concentration:'Eau de Parfum',price:'22',year:'2023',nose:'',family:'Aromatica Amaderada',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Bergamota','Jengibre','Cedro','Vetiver','Ambar','Almizcle'],top:'Bergamota, Jengibre, Limon',heart:'Cedro, Iris, Cardamomo',base:'Vetiver, Ambar, Almizcle',desc:'Sueños de isla. Jengibre y cedro para el aventurero moderno.',descLong:'Island Dreams de Khadlaj evoca la aventura en una isla tropical. Bergamota y jengibre vivos sobre cedro e iris terminando en vetiver y ambar. Un aromatico moderno de gran proyeccion con la calidad arabiga de Khadlaj.',reviews:[]}
-  ,{id:210,emoji:'🌺',photo:null,brand:'Khadlaj',name:'Hareem Al Sultan Gold EDP',concentration:'Eau de Parfum',price:'20',year:'2019',nose:'',family:'Oriental Floral',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'9-12 horas',sillage:'Intensa',notes:['Rosa','Azafran','Oud','Sandalo','Ambar','Almizcle'],top:'Azafran, Rosa, Bergamota',heart:'Oud, Rosa, Jazmin',base:'Sandalo, Ambar, Almizcle',desc:'El harén dorado. Rosa, oud y azafrán de opulencia oriental.',descLong:'Hareem Al Sultan Gold es la fragancia mas emblematica de Khadlaj. Azafran real y rosa sobre oud profundo terminando en sandalo y ambar. Lujosa, envolvente y de longevidad extraordinaria para quien quiere el lujo oriental a precio accesible.',reviews:[]}
+  ,{id:210,emoji:'🌺',photo:null,brand:'Khadlaj',name:'Hareem Al Sultan Gold EDP',concentration:'Eau de Parfum',price:'20',year:'2019',nose:'',family:'Oriental Floral',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'9-12 horas',sillage:'Intensa',notes:['Rosa','Azafran','Oud','Sandalo','Ambar','Almizcle'],top:'Azafran, Rosa, Bergamota',heart:'Oud, Rosa, Jazmin',base:'Sandalo, Ambar, Almizcle',desc:'El harén dorado. Rosa, oud y azafrán de opulencia oriental.',descLong:'Hareem Al Sultan Gold es el perfume mas emblematico de Khadlaj. Azafran real y rosa sobre oud profundo terminando en sandalo y ambar. Lujosa, envolvente y de longevidad extraordinaria para quien quiere el lujo oriental a precio accesible.',reviews:[]}
   ,{id:211,emoji:'💜',photo:null,brand:'Khadlaj',name:'Hareem Al Sultan Silver EDP',concentration:'Eau de Parfum',price:'20',year:'2019',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Rosa','Jazmin','Sandalo','Almizcle Blanco','Ambar Blanco'],top:'Bergamota, Neroli',heart:'Rosa, Jazmin, Iris',base:'Sandalo, Almizcle Blanco, Ambar',desc:'El harén plateado. Floral blanco elegante y más ligero.',descLong:'Hareem Al Sultan Silver es la version mas ligera y diurna del famoso Hareem. Rosa y jazmin sobre sandalo y almizcle blanco. Mas fresco y accesible que el Gold, ideal para el dia a dia con el lujo arabigo.',reviews:[]}
 
   // ── ARABIYAT PRESTIGE ──
@@ -3331,12 +3342,12 @@ const DEFAULTS=[
   ,{id:213,emoji:'🌹',photo:null,brand:'Arabiyat Prestige',name:'Desert Rose EDP',concentration:'Eau de Parfum',price:'22',year:'2021',nose:'',family:'Floral Oriental',occasion:'Noche, citas, otono',season:'Otono / Invierno',duration:'8-10 horas',sillage:'Intensa',notes:['Rosa del Desierto','Oud','Ambar','Sandalo','Almizcle'],top:'Rosa, Bergamota',heart:'Rosa del Desierto, Oud',base:'Sandalo, Ambar, Almizcle',desc:'Rosa del desierto. Floral oriental con oud y arena.',descLong:'Desert Rose es el oriental florales mas poetico de Arabiyat Prestige. La rosa del desierto y el oud sobre sandalo y ambar evocan las dunas bajo el atardecer. Rico, sensual y con la generosidad arabiga en proyeccion y duracion.',reviews:[]}
 
   // ── RAYHAAN ──
-  ,{id:214,emoji:'🌊',photo:null,brand:'Rayhaan',name:'Aquatica EDP',concentration:'Eau de Parfum',price:'24',year:'2021',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, deporte',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Notas Marinas','Bergamota','Menta','Cedro','Coco','Almizcle'],top:'Notas Marinas, Bergamota, Lima',heart:'Menta, Cedro, Coco',base:'Almizcle, Ambar, Vetiver',desc:'Aquatica de Rayhaan. El mar en una botella geometrica de lujo.',descLong:'Aquatica es la fragancia estrella marina de Rayhaan. Notas marinas y bergamota sobre menta y coco sobre cedro y almizcle. La botella geometrica de cristal turquesa es tan iconica como el perfume. Fresco, tropical y con mucha personalidad.',reviews:[]}
+  ,{id:214,emoji:'🌊',photo:null,brand:'Rayhaan',name:'Aquatica EDP',concentration:'Eau de Parfum',price:'24',year:'2021',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, deporte',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Notas Marinas','Bergamota','Menta','Cedro','Coco','Almizcle'],top:'Notas Marinas, Bergamota, Lima',heart:'Menta, Cedro, Coco',base:'Almizcle, Ambar, Vetiver',desc:'Aquatica de Rayhaan. El mar en una botella geometrica de lujo.',descLong:'Aquatica es el perfume estrella marina de Rayhaan. Notas marinas y bergamota sobre menta y coco sobre cedro y almizcle. La botella geometrica de cristal turquesa es tan iconica como el perfume. Fresco, tropical y con mucha personalidad.',reviews:[]}
   ,{id:215,emoji:'🌹',photo:null,brand:'Rayhaan',name:'Rooh Al Oud EDP',concentration:'Eau de Parfum',price:'26',year:'2020',nose:'',family:'Oriental Amaderada',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Muy intensa',notes:['Oud','Rosa','Azafran','Sandalo','Ambar','Incienso'],top:'Azafran, Bergamota',heart:'Oud, Rosa',base:'Sandalo, Ambar, Incienso',desc:'El alma del oud. Oud y rosa de gran nobleza Rayhaan.',descLong:'Rooh Al Oud significa "el alma del oud". Azafran y rosa sobre oud de alta calidad terminando en sandalo e incienso. Rayhaan en su version mas oriental y lujosa, para los amantes del oud que buscan autenticidad y precio justo.',reviews:[]}
 
   // ── LATTAFA (nuevos) ──
   ,{id:216,emoji:'🌊',photo:null,brand:'Lattafa',name:'Opulent Dubai EDP',concentration:'Eau de Parfum',price:'22',year:'2022',nose:'',family:'Floral Acuatica',occasion:'Dia, primavera, versatil',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Bergamota','Mango','Jazmin','Coco','Almizcle','Ambar'],top:'Bergamota, Mango, Citrico',heart:'Jazmin, Coco, Gardenia',base:'Almizcle, Ambar Blanco, Cedro',desc:'Opulencia de Dubai. Tropical, floral y con el lujo de la ciudad dorada.',descLong:'Opulent Dubai captura la esencia de la ciudad mas lujosa del mundo. Mango y bergamota sobre jazmin y coco terminando en almizcle blanco y ambar. Tropical, fresco y con la opulencia arabiga que caracteriza a Lattafa.',reviews:[]}
-  ,{id:217,emoji:'🔴',photo:null,brand:'Lattafa',name:'Wajaha EDP',concentration:'Eau de Parfum',price:'20',year:'2021',nose:'',family:'Oriental Especiada',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'9-12 horas',sillage:'Intensa',notes:['Azafran','Cuero','Oud','Ambar','Pachuli','Rosa'],top:'Azafran, Bergamota',heart:'Cuero, Rosa, Oud',base:'Ambar, Pachuli, Almizcle',desc:'La cara de Lattafa. Oriental especiado con azafrán y cuero.',descLong:'Wajaha es el oriental especiado mas directo y potente de Lattafa. Azafran real sobre cuero y rosa con oud terminando en ambar y pachuli. Gran proyeccion y longevidad para una fragancia que exige atencion.',reviews:[]}
+  ,{id:217,emoji:'🔴',photo:null,brand:'Lattafa',name:'Wajaha EDP',concentration:'Eau de Parfum',price:'20',year:'2021',nose:'',family:'Oriental Especiada',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'9-12 horas',sillage:'Intensa',notes:['Azafran','Cuero','Oud','Ambar','Pachuli','Rosa'],top:'Azafran, Bergamota',heart:'Cuero, Rosa, Oud',base:'Ambar, Pachuli, Almizcle',desc:'La cara de Lattafa. Oriental especiado con azafrán y cuero.',descLong:'Wajaha es el oriental especiado mas directo y potente de Lattafa. Azafran real sobre cuero y rosa con oud terminando en ambar y pachuli. Gran proyeccion y longevidad para un perfume que exige atencion.',reviews:[]}
   ,{id:218,emoji:'🌸',photo:null,brand:'Lattafa',name:'Ana Abiyedh Rouge EDP',concentration:'Eau de Parfum',price:'18',year:'2021',nose:'',family:'Floral Frutal',occasion:'Dia, primavera, casual',season:'Primavera / Verano',duration:'7-8 horas',sillage:'Moderada',notes:['Frutas Rojas','Rosa','Jazmin','Almizcle','Ambar'],top:'Frutas Rojas, Bergamota',heart:'Rosa, Jazmin',base:'Almizcle, Ambar, Sandalo',desc:'Ana Abiyedh en rojo. Frutas rojas y flores sobre almizcle delicado.',descLong:'Ana Abiyedh Rouge lleva el famoso floral blanco de Lattafa al universo frutal y rojizo. Frutas rojas y bergamota sobre rosa y jazmin terminando en almizcle y ambar. La version mas dulce y accesible para el dia a dia.',reviews:[]}
   ,{id:219,emoji:'🤍',photo:null,brand:'Lattafa',name:'Ana Abiyedh EDP',concentration:'Eau de Parfum',price:'18',year:'2019',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Jazmin','Rosa','Almizcle Blanco','Sandalo','Ambar Blanco'],top:'Bergamota, Neroli',heart:'Jazmin, Rosa, Iris',base:'Sandalo, Almizcle Blanco, Ambar Blanco',desc:'Yo soy blanca. El floral blanco más popular de Lattafa.',descLong:'Ana Abiyedh significa "soy blanca" en arabe. Un floral blanco de gran pureza con jazmin y rosa sobre sandalo y almizcle blanco. Uno de los florales mas vendidos de Lattafa — accesible, elegante y de gran versatilidad.',reviews:[]}
 
@@ -3353,7 +3364,7 @@ const DEFAULTS=[
 
   // ── STÉPHANE HUMBERT LUCAS ──
   ,{id:227,emoji:'🔵',photo:null,brand:'Stephane Humbert Lucas',name:'God of Fire EDP',concentration:'Eau de Parfum',price:'65',year:'2020',nose:'Stephane Humbert Lucas',family:'Aromatica Acuatica',occasion:'Dia, verano, eventos',season:'Primavera / Verano',duration:'8-10 horas',sillage:'Intensa',notes:['Bergamota','Mandarina','Lavanda','Cedro','Ambar Marino','Almizcle'],top:'Bergamota, Mandarina, Limon',heart:'Lavanda, Cedro, Petitgrain',base:'Ambar Marino, Almizcle, Musgo',desc:'El Dios del Fuego. Citrico marino de nicho con alma divina.',descLong:'God of Fire de Stephane Humbert Lucas es un citrico marino de extraordinaria sofisticacion. Bergamota y mandarina sobre lavanda y cedro terminando en ambar marino y almizcle. La botella azul turquesa con la corona dorada es tan iconica como el perfume.',reviews:[]}
-  ,{id:228,emoji:'🖤',photo:null,brand:'Stephane Humbert Lucas',name:'Mortal Skin EDP',concentration:'Eau de Parfum',price:'68',year:'2016',nose:'Stephane Humbert Lucas',family:'Oriental Amaderada',occasion:'Noche, invierno, eventos exclusivos',season:'Otono / Invierno',duration:'10-14 horas',sillage:'Muy intensa',notes:['Cuero','Tabaco','Oud','Ambar','Sandalo','Almizcle Animal'],top:'Bergamota, Pimienta',heart:'Cuero, Tabaco, Oud',base:'Sandalo, Ambar, Almizcle Animal',desc:'La piel mortal. Cuero, tabaco y oud del nicho parisino más oscuro.',descLong:'Mortal Skin es la fragancia mas oscura y animal de Stephane Humbert Lucas. Cuero y tabaco sobre oud y sandalo con almizcle animal en la base. Para los amantes del nicho que buscan algo que deje una huella duradera e inconfundible.',reviews:[]}
+  ,{id:228,emoji:'🖤',photo:null,brand:'Stephane Humbert Lucas',name:'Mortal Skin EDP',concentration:'Eau de Parfum',price:'68',year:'2016',nose:'Stephane Humbert Lucas',family:'Oriental Amaderada',occasion:'Noche, invierno, eventos exclusivos',season:'Otono / Invierno',duration:'10-14 horas',sillage:'Muy intensa',notes:['Cuero','Tabaco','Oud','Ambar','Sandalo','Almizcle Animal'],top:'Bergamota, Pimienta',heart:'Cuero, Tabaco, Oud',base:'Sandalo, Ambar, Almizcle Animal',desc:'La piel mortal. Cuero, tabaco y oud del nicho parisino más oscuro.',descLong:'Mortal Skin es el perfume mas oscuro y animal de Stephane Humbert Lucas. Cuero y tabaco sobre oud y sandalo con almizcle animal en la base. Para los amantes del nicho que buscan algo que deje una huella duradera e inconfundible.',reviews:[]}
 
   // ── BUJAIRAMI ──
   ,{id:229,emoji:'💙',photo:null,brand:'Bujairami',name:'Hectic Extrait de Parfum',concentration:'Extrait de Parfum',price:'35',year:'2023',nose:'',family:'Citrica Aromatica',occasion:'Dia, verano, trabajo',season:'Primavera / Verano',duration:'8-10 horas',sillage:'Moderada',notes:['Limon','Bergamota','Jengibre','Cedro','Vetiver','Almizcle'],top:'Limon, Bergamota, Jengibre',heart:'Cedro, Cardamomo, Iris',base:'Vetiver, Almizcle, Ambar',desc:'Hectic. Jengibre y limón frenéticos de la nueva joya árabe.',descLong:'Hectic de Bujairami es el extrait de parfum mas vibrante de la joven marca arabiga. Limon y jengibre energeticos sobre cedro e iris terminando en vetiver y almizcle. Moderno, fresco y con la calidad de extrait que lo hace excepcional para su precio.',reviews:[]}
@@ -3365,7 +3376,7 @@ const DEFAULTS=[
   ,{id:233,emoji:'🔴',photo:null,brand:'Valentino',name:'Voce Viva Intensa EDP',concentration:'Eau de Parfum Intensa',price:'38',year:'2021',nose:'',family:'Floral Oriental',occasion:'Noche, citas, otono',season:'Otono / Invierno',duration:'9-11 horas',sillage:'Intensa',notes:['Bergamota','Flor de Naranjo','Gardenia','Vainilla Africana','Ambar'],top:'Bergamota, Mandarina',heart:'Flor de Naranjo, Gardenia, Tuberosa',base:'Vainilla Africana, Ambar, Almizcle',desc:'Voce Viva más intensa. Flor de naranjo y vainilla africana opulentos.',descLong:'Voce Viva Intensa profundiza la formula original con flor de naranjo mas densa y vainilla africana absoluta en la base. La voz femenina mas intensa y seductora de Valentino para las noches que merece la pena recordar.',reviews:[]}
   ,{id:234,emoji:'🌹',photo:null,brand:'Valentino',name:'Valentina EDP',concentration:'Eau de Parfum',price:'34',year:'2011',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Bergamota','Fresa','Gardenia','Rosa','Pachuli','Cedro','Almizcle'],top:'Bergamota, Fresa, Mandarina',heart:'Gardenia, Rosa Absoluta',base:'Pachuli, Cedro, Almizcle',desc:'Valentina. La feminidad italiana en su forma más pura.',descLong:'Valentina es el floral signature de Valentino. Fresa y bergamota abren gardenia y rosa absoluta sobre pachuli y cedro. Elegante, italiana y con la feminidad inconfundible de la maison que viste a las mujeres mas sofisticadas del mundo.',reviews:[]}
   ,{id:235,emoji:'💫',photo:null,brand:'Valentino',name:'Valentina Assoluto EDP',concentration:'Eau de Parfum',price:'36',year:'2013',nose:'',family:'Floral Oriental',occasion:'Noche, citas, invierno',season:'Otono / Invierno',duration:'9-11 horas',sillage:'Intensa',notes:['Bergamota','Gardenia','Rosa','Pachuli','Madera','Ambar'],top:'Bergamota, Mandarina',heart:'Gardenia Absoluta, Rosa, Jazmin',base:'Pachuli, Madera, Ambar, Almizcle',desc:'Valentina en su máxima expresión. Gardenia absoluta y pachulí opulento.',descLong:'Valentina Assoluto es la version mas lujosa y oscura de la saga. Gardenia absoluta y rosa sobre pachuli denso y ambar calido. Para la mujer que quiere la feminidad Valentino en su forma mas intensa y memorable.',reviews:[]}
-  ,{id:236,emoji:'🌊',photo:null,brand:'Valentino',name:'Acqua Floreale EDT',concentration:'Eau de Toilette',price:'30',year:'2012',nose:'',family:'Floral Acuatica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'4-6 horas',sillage:'Ligera',notes:['Bergamota','Notas Acuaticas','Gardenia','Jazmin','Almizcle Blanco'],top:'Bergamota, Notas Acuaticas',heart:'Gardenia, Jazmin, Rosa',base:'Almizcle Blanco, Cedro',desc:'Acqua floral. El Valentino más fresco y ligero para el verano.',descLong:'Acqua Floreale es la fragancia veraniega y acuatica de Valentino. Bergamota y notas acuaticas abren gardenia y jazmin sobre almizcle blanco. Fresca, ligera y perfecta para los dias calurosos con el sello de distincion italiano.',reviews:[]}
+  ,{id:236,emoji:'🌊',photo:null,brand:'Valentino',name:'Acqua Floreale EDT',concentration:'Eau de Toilette',price:'30',year:'2012',nose:'',family:'Floral Acuatica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'4-6 horas',sillage:'Ligera',notes:['Bergamota','Notas Acuaticas','Gardenia','Jazmin','Almizcle Blanco'],top:'Bergamota, Notas Acuaticas',heart:'Gardenia, Jazmin, Rosa',base:'Almizcle Blanco, Cedro',desc:'Acqua floral. El Valentino más fresco y ligero para el verano.',descLong:'Acqua Floreale es el perfume veraniego y acuatico de Valentino. Bergamota y notas acuaticas abren gardenia y jazmin sobre almizcle blanco. Fresca, ligera y perfecta para los dias calurosos con el sello de distincion italiano.',reviews:[]}
   ,{id:237,emoji:'💚',photo:null,brand:'Valentino',name:'V EDP',concentration:'Eau de Parfum',price:'33',year:'2004',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, clasico',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Bergamota','Rosa','Iris','Sandalo','Vainilla','Almizcle'],top:'Bergamota, Rosa, Mandarina',heart:'Iris, Peonia, Magnolia',base:'Sandalo, Vainilla, Almizcle',desc:'V de Valentino. El floral clásico e intemporal de la casa.',descLong:'V es el floral mas clasico y reconocible de Valentino. Bergamota y rosa abren iris y peonia sobre sandalo y vainilla. Un floral amaderado intemporal que representa la elegancia italiana en su forma mas arquetipica.',reviews:[]}
   ,{id:238,emoji:'🖤',photo:null,brand:'Valentino',name:'Uomo Born in Roma EDP',concentration:'Eau de Parfum',price:'36',year:'2019',nose:'',family:'Aromatica Amaderada',occasion:'Noche, trabajo, versatil',season:'Todo el ano',duration:'8-10 horas',sillage:'Moderada-Intensa',notes:['Pimienta','Bergamota','Iris','Vetiver','Sandalo','Ambar'],top:'Pimienta Rosa, Bergamota',heart:'Iris Negro, Lavanda',base:'Vetiver, Sandalo, Ambar',desc:'Uomo en Roma. El masculino más moderno y urbano de Valentino.',descLong:'Uomo Born in Roma toma el iris caracteristico del Uomo y lo envuelve en pimienta y vetiver para un resultado mas oscuro y urbanita. El perfume del romano moderno que trabaja de dia y sale de noche sin cambiarse.',reviews:[]}
   ,{id:239,emoji:'💙',photo:null,brand:'Valentino',name:'Uomo Acqua EDT',concentration:'Eau de Toilette',price:'31',year:'2016',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, deporte',season:'Primavera / Verano',duration:'5-7 horas',sillage:'Moderada',notes:['Lima','Bergamota','Menta','Cedro','Almizcle','Ambar'],top:'Lima, Bergamota, Menta',heart:'Cedro, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Uomo en el agua. El verano masculino más fresco de Valentino.',descLong:'Uomo Acqua lleva el iris clasico del Uomo al universo marino y fresco. Lima y menta sobre cedro y geranio terminando en almizcle y ambar. El Valentino masculino para el verano activo y deportivo.',reviews:[]}
@@ -3386,7 +3397,7 @@ const DEFAULTS=[
   ,{id:252,emoji:'🌺',photo:null,brand:'Valentino',name:'Voce Viva Coral Fantasy EDP',concentration:'Eau de Parfum',price:'37',year:'2023',nose:'',family:'Floral Frutal',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-8 horas',sillage:'Moderada',notes:['Naranja Sanguina','Bergamota','Magnolia','Flor de Naranjo','Almizcle','Cedro'],top:'Naranja Sanguina, Bergamota, Lima',heart:'Magnolia, Flor de Naranjo, Gardenia',base:'Cedro, Almizcle Blanco, Ambar Coral',desc:'Voce Viva en coral. Naranja sanguina y magnolia tropicales.',descLong:'Voce Viva Coral Fantasy lleva la saga al verano mas luminoso. Naranja sanguina y bergamota abren magnolia y gardenia sobre cedro y almizcle coral. La voz de Valentino cuando el sol de Roma se mezcla con el Mediterraneo.',reviews:[]}
   ,{id:253,emoji:'🌊',photo:null,brand:'Valentino',name:'Donna Acqua EDT',concentration:'Eau de Toilette',price:'31',year:'2014',nose:'',family:'Floral Acuatica',occasion:'Dia, verano, trabajo',season:'Primavera / Verano',duration:'5-6 horas',sillage:'Ligera',notes:['Bergamota','Mandarina','Gardenia','Sandalo','Almizcle Blanco'],top:'Bergamota, Mandarina, Notas Marinas',heart:'Gardenia, Peonia',base:'Sandalo, Almizcle Blanco, Ambar',desc:'Donna refrescada. El floral veraniego más fresco de Valentino.',descLong:'Donna Acqua es la version mas fresca y acuatica del clasico Donna de Valentino. Bergamota y mandarina con notas marinas sobre gardenia y peonia terminando en sandalo y almizcle. La Donna del verano italiano.',reviews:[]}
   ,{id:254,emoji:'💛',photo:null,brand:'Valentino',name:'Valentina Oud Assoluto EDP',concentration:'Eau de Parfum',price:'38',year:'2014',nose:'',family:'Oriental Floral',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Intensa',notes:['Oud','Bergamota','Gardenia','Rosa','Pachuli','Ambar','Resina'],top:'Bergamota, Naranja, Rosa',heart:'Gardenia, Oud, Incienso',base:'Pachuli, Ambar, Resina, Almizcle',desc:'Valentina con oud. La gardenia y el oud en perfecta armonía.',descLong:'Valentina Oud Assoluto une el floral classico de Valentina con el orientalismo del oud. Gardenia y rosa sobre oud profundo e incienso terminando en pachuli y resina. La Valentina para las grandes ocasiones de invierno.',reviews:[]}
-  ,{id:255,emoji:'🔮',photo:null,brand:'Valentino',name:'Noir Absolu EDP',concentration:'Eau de Parfum',price:'37',year:'2015',nose:'',family:'Oriental Amaderada',occasion:'Noche, invierno, eventos especiales',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Muy intensa',notes:['Rosa Negra','Oud','Pachuli','Cuero','Ambar Oscuro','Incienso'],top:'Bergamota, Pimienta',heart:'Rosa Negra, Oud, Iris',base:'Cuero, Pachuli, Ambar Oscuro, Incienso',desc:'Negro absoluto. Rosa negra y oud del Valentino más oscuro.',descLong:'Noir Absolu es la fragancia mas oscura y dramatica de Valentino. Rosa negra sobre oud profundo y cuero con incienso y ambar en la base. Para las noches en que solo el negro es suficiente — opulento, misterioso e inolvidable.',reviews:[]}
+  ,{id:255,emoji:'🔮',photo:null,brand:'Valentino',name:'Noir Absolu EDP',concentration:'Eau de Parfum',price:'37',year:'2015',nose:'',family:'Oriental Amaderada',occasion:'Noche, invierno, eventos especiales',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Muy intensa',notes:['Rosa Negra','Oud','Pachuli','Cuero','Ambar Oscuro','Incienso'],top:'Bergamota, Pimienta',heart:'Rosa Negra, Oud, Iris',base:'Cuero, Pachuli, Ambar Oscuro, Incienso',desc:'Negro absoluto. Rosa negra y oud del Valentino más oscuro.',descLong:'Noir Absolu es el perfume mas oscuro y dramatico de Valentino. Rosa negra sobre oud profundo y cuero con incienso y ambar en la base. Para las noches en que solo el negro es suficiente — opulento, misterioso e inolvidable.',reviews:[]}
 
   // ── VALENTINO MASCULINOS (todos los que faltan) ──
   ,{id:256,emoji:'🔥',photo:null,brand:'Valentino',name:'Born in Roma Uomo Intense EDP',concentration:'Eau de Parfum Intense',price:'38',year:'2020',nose:'',family:'Oriental Amaderada',occasion:'Noche, otono, eventos',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Muy intensa',notes:['Pimienta Negra','Iris','Cuero','Tabaco','Ambar','Sandalo','Vetiver'],top:'Pimienta Negra, Bergamota',heart:'Iris Negro, Cuero, Tabaco Virginia',base:'Sandalo, Vetiver, Ambar Oscuro',desc:'Born in Roma Uomo en versión intensa. Cuero, tabaco e iris oscuros.',descLong:'Born in Roma Uomo Intense lleva el masculino de Valentino a su expresion mas oscura y poderosa. Pimienta negra y bergamota abren iris negro y cuero sobre tabaco Virginia terminando en sandalo y vetiver profundo. Para el romano que domina la noche.',reviews:[]}
@@ -3399,7 +3410,7 @@ const DEFAULTS=[
   ,{id:263,emoji:'🌙',photo:null,brand:'Valentino',name:'Uomo Born in Roma Intense EDP',concentration:'Eau de Parfum Intense',price:'38',year:'2021',nose:'',family:'Oriental Aromatica',occasion:'Noche, otono, citas',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Intensa',notes:['Bergamota','Pimienta','Iris','Cuero Oscuro','Vetiver','Ambar','Almizcle'],top:'Bergamota, Pimienta Rosa, Cardamomo',heart:'Iris, Cuero Oscuro, Cedro',base:'Vetiver, Ambar, Almizcle Oscuro',desc:'Born in Roma Uomo más oscuro e intenso. El romano de noche.',descLong:'Uomo Born in Roma Intense profundiza el Born in Roma Uomo con mas cuero oscuro y base de vetiver densa. Pimienta y cardamomo sobre iris y cuero terminando en ambar y almizcle. La version nocturna y mas seductora del masculino icónico de Valentino.',reviews:[]}
   ,{id:264,emoji:'💎',photo:null,brand:'Valentino',name:'Uomo EDP',concentration:'Eau de Parfum',price:'35',year:'2020',nose:'',family:'Oriental Floral',occasion:'Noche, citas, otono',season:'Otono / Invierno',duration:'9-11 horas',sillage:'Intensa',notes:['Bergamota','Cardamomo','Iris','Cuero','Ambar','Sandalo','Vainilla'],top:'Bergamota, Cardamomo, Limon',heart:'Iris, Cuero, Geranio',base:'Sandalo, Ambar, Vainilla, Almizcle',desc:'Uomo en EDP. El iris Valentino con más riqueza y profundidad.',descLong:'Uomo EDP eleva la concentracion del clasico con mas cardamomo especiado e iris de mayor densidad sobre sandalo y vainilla en la base. Mas rico y duradero que el EDT, ideal para las noches en que el caballero Valentino quiere dejar su huella.',reviews:[]}
   ,{id:265,emoji:'🌸',photo:null,brand:'Valentino',name:'Uomo Gold EDP',concentration:'Eau de Parfum',price:'37',year:'2021',nose:'',family:'Oriental Gourmand',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'9-11 horas',sillage:'Intensa',notes:['Bergamota','Canela','Iris','Miel','Sandalo','Ambar','Vainilla'],top:'Bergamota, Canela, Cardamomo',heart:'Iris Dorado, Miel, Rosa',base:'Sandalo, Ambar Dorado, Vainilla',desc:'Uomo de oro. Canela, miel e iris en versión dorada y gourmand.',descLong:'Uomo Gold toma el iris classico del masculino y lo baña en canela y miel sobre sandalo y vainilla. Un gourmand oriental de gran elegancia para las noches especiales. El Uomo que brilla como el oro de Roma bajo la luz de la noche.',reviews:[]}
-  ,{id:266,emoji:'🔵',photo:null,brand:'Valentino',name:'Uomo Born in Roma Riviera EDP',concentration:'Eau de Parfum',price:'36',year:'2022',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-8 horas',sillage:'Moderada',notes:['Bergamota','Limon','Notas Marinas','Iris','Cedro','Almizcle'],top:'Limon, Bergamota, Notas Marinas',heart:'Iris, Cedro, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Uomo en la Riviera. El marino más elegante de Valentino para él.',descLong:'Born in Roma Uomo Riviera es la fragancia veraniega de la saga masculina. Limon y bergamota con notas marinas sobre iris y cedro terminando en almizcle y vetiver. El caballero Valentino disfruta de la Riviera italiana con el estilo de siempre.',reviews:[]}
+  ,{id:266,emoji:'🔵',photo:null,brand:'Valentino',name:'Uomo Born in Roma Riviera EDP',concentration:'Eau de Parfum',price:'36',year:'2022',nose:'',family:'Aromatica Acuatica',occasion:'Dia, verano, casual',season:'Primavera / Verano',duration:'7-8 horas',sillage:'Moderada',notes:['Bergamota','Limon','Notas Marinas','Iris','Cedro','Almizcle'],top:'Limon, Bergamota, Notas Marinas',heart:'Iris, Cedro, Geranio',base:'Almizcle, Ambar, Vetiver',desc:'Uomo en la Riviera. El marino más elegante de Valentino para él.',descLong:'Born in Roma Uomo Riviera es el perfume veraniego de la saga masculina. Limon y bergamota con notas marinas sobre iris y cedro terminando en almizcle y vetiver. El caballero Valentino disfruta de la Riviera italiana con el estilo de siempre.',reviews:[]}
 
   // ── PARFUMS DE MARLY ──
 
@@ -3410,7 +3421,7 @@ const DEFAULTS=[
   ,{id:270,emoji:'🍑',photo:null,brand:'Parfums de Marly',name:'Delina Exclusif EDP',concentration:'Eau de Parfum',price:'62',year:'2019',nose:'Quentin Bisch',family:'Floral Oriental',occasion:'Noche, otono, eventos',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Intensa',notes:['Bergamota','Pera','Lichi','Ambar','Bergamota','Rosa'],top:'Bergamota, Pera, Lichi',heart:'Rosa, Peonia, Lila',base:'Ambar, Cachemira, Almizcle',desc:'Delina mas rica e intensa. Pera y ámbar profundizan la rosa.',descLong:'Delina Exclusif lleva la magia del Delina original a territorio mas profundo y oriental. Pera jugosa y bergamota abren la misma rosa damascena pero sobre ambar y cachemira mas ricos y sensuales. La Delina de noche para ocasiones especiales.',reviews:[]}
   ,{id:271,emoji:'🐎',photo:null,brand:'Parfums de Marly',name:'Godolphin EDP',concentration:'Eau de Parfum',price:'58',year:'2013',nose:'Hamid Merati-Kashani',family:'Oriental Especiada',occasion:'Noche, invierno, eventos',season:'Otono / Invierno',duration:'10-12 horas',sillage:'Muy intensa',notes:['Canela','Clavo','Rosa','Cuero','Tabaco','Sandalo','Ambar'],top:'Canela, Clavo, Bergamota',heart:'Rosa, Cuero, Violeta',base:'Tabaco, Sandalo, Ambar, Almizcle',desc:'El caballo dorado. Cuero, tabaco y especias del siglo XVIII.',descLong:'Godolphin es el oriental mas suntuoso de la maison. Canela y clavo sobre cuero y rosa terminando en tabaco y sandalo. Inspirado en el legendario caballo de carreras Godolphin Arabian, es oscuro, poderoso y de una elegancia historica sin igual.',reviews:[]}
   ,{id:272,emoji:'🌿',photo:null,brand:'Parfums de Marly',name:'Kalan EDP',concentration:'Eau de Parfum',price:'56',year:'2020',nose:'Hamid Merati-Kashani',family:'Aromatica Acuatica',occasion:'Dia, verano, trabajo',season:'Primavera / Verano',duration:'7-9 horas',sillage:'Moderada',notes:['Menta','Pomelo','Lavanda','Geranio','Ambroxan','Almizcle','Ambar'],top:'Menta, Pomelo, Bergamota',heart:'Lavanda, Geranio, Cedro',base:'Ambroxan, Almizcle, Ambar',desc:'El frescor de Marly. Menta, pomelo y ambroxan para el hombre moderno.',descLong:'Kalan es el fresco mas popular de Parfums de Marly. Menta electrica y pomelo sobre lavanda y geranio terminando en ambroxan y almizcle. Fresco pero con profundidad, ligero pero memorable. El Marly para el dia a dia sin renunciar al lujo.',reviews:[]}
-  ,{id:273,emoji:'🌸',photo:null,brand:'Parfums de Marly',name:'Valaya EDP',concentration:'Eau de Parfum',price:'58',year:'2020',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'8-10 horas',sillage:'Moderada',notes:['Bergamota','Mandarina','Melocoton Blanco','Flor de Naranjo','Vetiver','Ambroxan','Almizcle'],top:'Bergamota, Mandarina, Melocoton Blanco',heart:'Flor de Naranjo, Vetiver, Iris',base:'Ambroxan, Almizcle, Ambar Blanco',desc:'Valaya. Piel de melocotón blanco y flor de naranjo sedosa.',descLong:'Valaya es descrito como la sensacion de una piel de algodon y melocoton. Bergamota y mandarina sobre flor de naranjo y vetiver terminando en ambroxan y almizcle blanco. Una fragancia que huele como piel limpia y lujosa, irresistible y adictiva.',reviews:[]}
+  ,{id:273,emoji:'🌸',photo:null,brand:'Parfums de Marly',name:'Valaya EDP',concentration:'Eau de Parfum',price:'58',year:'2020',nose:'',family:'Floral Amaderada',occasion:'Dia, trabajo, versatil',season:'Todo el ano',duration:'8-10 horas',sillage:'Moderada',notes:['Bergamota','Mandarina','Melocoton Blanco','Flor de Naranjo','Vetiver','Ambroxan','Almizcle'],top:'Bergamota, Mandarina, Melocoton Blanco',heart:'Flor de Naranjo, Vetiver, Iris',base:'Ambroxan, Almizcle, Ambar Blanco',desc:'Valaya. Piel de melocotón blanco y flor de naranjo sedosa.',descLong:'Valaya es descrito como la sensacion de una piel de algodon y melocoton. Bergamota y mandarina sobre flor de naranjo y vetiver terminando en ambroxan y almizcle blanco. Un perfume que huele como piel limpia y lujosa, irresistible y adictivo.',reviews:[]}
   ,{id:274,emoji:'🌊',photo:null,brand:'Parfums de Marly',name:'Percival EDP',concentration:'Eau de Parfum',price:'56',year:'2017',nose:'',family:'Aromatica Amaderada',occasion:'Dia, trabajo, casual',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Mandarina','Bergamota','Lavanda','Cedro','Ambar','Almizcle'],top:'Mandarina, Bergamota',heart:'Lavanda, Cedro, Iris',base:'Ambar, Almizcle, Madera',desc:'Percival. El masculino más fresco y elegante de la colección.',descLong:'Percival es el fresco aromatico mas puro de Parfums de Marly. Mandarina y bergamota sobre lavanda y cedro terminando en ambar y almizcle. Simple en su concepto pero ejecutado con la calidad extraordinaria de la maison. Un diario de lujo sin pretensiones.',reviews:[]}
   ,{id:275,emoji:'🟡',photo:null,brand:'Parfums de Marly',name:'Galloway EDP',concentration:'Eau de Parfum',price:'56',year:'2012',nose:'',family:'Citrica Especiada',occasion:'Dia, trabajo, todo el ano',season:'Todo el ano',duration:'7-9 horas',sillage:'Moderada',notes:['Limon','Bergamota','Pimienta','Cedro','Vetiver','Almizcle'],top:'Limon, Bergamota, Pimienta Rosa',heart:'Cedro, Geranio, Nuez Moscada',base:'Vetiver, Almizcle, Ambar',desc:'Galloway. Cítrico pimentado con carácter aristocrático.',descLong:'Galloway mezcla la elegancia citrica con la pimienta especiada en un masculino refinado y aristocratico. Limon y bergamota sobre cedro y geranio terminando en vetiver y almizcle. Clasico, sofisticado y con el sello inconfundible de la Corte de Luis XV.',reviews:[]}
   ,{id:276,emoji:'🍎',photo:null,brand:'Parfums de Marly',name:'Sedley EDP',concentration:'Eau de Parfum',price:'57',year:'2019',nose:'Hamid Merati-Kashani',family:'Aromatica Acuatica',occasion:'Dia, verano, trabajo',season:'Primavera / Verano',duration:'8-10 horas',sillage:'Moderada',notes:['Menta Fresca','Manzana','Bergamota','Pera','Cedro','Vetiver','Almizcle'],top:'Menta Fresca, Manzana, Bergamota',heart:'Pera, Lirio, Geranio',base:'Cedro, Vetiver, Almizcle',desc:'Sedley. Menta, manzana y cedro del jardín aristocrático.',descLong:'Sedley es el frescor mas inglés de la maison. Menta y manzana cristalinas sobre pera y lirio terminando en cedro y vetiver. Un masculino fresco y distinguido que evoca los jardines del palacio con la brisa del verano.',reviews:[]}
@@ -3596,6 +3607,7 @@ let sortBy = 'name_asc';
 let currentPage = 1;
 const PAGE_SIZE = 24;
 let currentPerfumeId = null;
+let buyNowItem = null; // { id, qty } cuando el usuario pulsa "Comprar" — compra solo ese producto, sin tocar el carrito real
 let editingId = null;
 let pendingDeleteId = null;
 let _pendingDeleteId = null;
@@ -3730,6 +3742,16 @@ function getFilteredSorted() {
 
 function hasActiveFilters() { return !!(searchQuery || selectedFamily || selectedSeason || selectedConc || selectedOccasion); }
 
+// Mantiene el número del hero y del footer siempre igual al total real
+// de perfumes del catálogo (el contador rojo de resultados tiene prioridad).
+function syncHeroCount() {
+  const realTotal = perfumes.length;
+  const heroEl = document.getElementById('heroPerfumeCount');
+  if (heroEl) heroEl.textContent = realTotal;
+  const footerEl = document.getElementById('footerPerfumeCount');
+  if (footerEl) footerEl.textContent = realTotal;
+}
+
 // ══════════════════════════════════════════════════════════════════
 // RENDER GRID
 // ══════════════════════════════════════════════════════════════════
@@ -3750,7 +3772,8 @@ function render() {
   const numEl = document.getElementById('resultsNum');
   if (numEl) { numEl.textContent = total; }
   const countEl = document.getElementById('resultsCount');
-  if (countEl) { countEl.querySelector('strong').nextSibling.textContent = hasActiveFilters() ? ' fragancias encontradas' : ' fragancias'; }
+  if (countEl) { countEl.querySelector('strong').nextSibling.textContent = hasActiveFilters() ? ' perfumes encontrados' : ' perfumes'; }
+  syncHeroCount();
 
   // Clear filters btn
   const clearBtn = document.getElementById('clearFiltersBtn');
@@ -4035,10 +4058,15 @@ function openPerfumeDrawer(id) {
         <button class="btn-ghost btn-sm" style="color:var(--color-destructive);border-color:var(--color-destructive);" onclick="deletePerfume(${id},event)">Eliminar</button>
       </div>` : ''}
     </div>
-    <button class="btn-gold" style="width:100%;padding:0.875rem;" id="drawerAddBtn" onclick="addToCartDrawer(${id})">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-      Añadir al carrito
-    </button>`;
+    <div style="display:flex;gap:0.5rem;">
+      <button class="btn-gold" style="flex:1;padding:0.875rem;" id="drawerAddBtn" onclick="addToCartDrawer(${id})">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        Añadir al carrito
+      </button>
+      <button class="btn-buy-now" style="flex:1;padding:0.875rem;" id="drawerBuyBtn" onclick="buyNow(${id})">
+        Comprar
+      </button>
+    </div>`;
 
   // Initialize star input
   window._reviewStar = 5;
@@ -4129,7 +4157,14 @@ function setCartQty(id, qty) {
 
 function clearCart() { cart = []; saveCart(); updateCartBadge(); renderCart(); }
 
-function checkoutCart() { showToast('🛒 Pago próximamente disponible', 'info'); }
+function checkoutCart() {
+  if (buyNowItem) {
+    const p = perfumes.find(x => x.id === buyNowItem.id);
+    showToast(`🛒 Pago de "${p ? p.name : 'producto'}" próximamente disponible`, 'info');
+    return;
+  }
+  showToast('🛒 Pago próximamente disponible', 'info');
+}
 
 function getCartTotal() { return cart.reduce((s,c) => { const p=perfumes.find(x=>x.id===c.id); return s+(p?parseFloat(p.price||0):0)*(c.qty||1); },0); }
 
@@ -4148,31 +4183,64 @@ function openCart() {
   document.body.style.overflow = 'hidden';
 }
 
+// Abre el carrito en modo "Comprar ahora": solo con este producto,
+// sin tocar ni mostrar el resto del carrito real del usuario.
+function buyNow(id) {
+  const p = perfumes.find(x => x.id === id);
+  if (!p) return;
+  buyNowItem = { id, qty: 1 };
+  openCart();
+}
+
+function setBuyNowQty(id, qty) {
+  if (!buyNowItem) return;
+  if (qty < 1) qty = 1;
+  if (qty > 99) qty = 99;
+  buyNowItem.qty = qty;
+  renderCart();
+}
+
 function closeCart() {
   document.getElementById('cartDrawer').classList.remove('open');
   if (!document.getElementById('perfumeDrawer').classList.contains('open')) {
     document.getElementById('drawerOverlay').classList.remove('open');
     document.body.style.overflow = '';
   }
+  buyNowItem = null;
 }
 
 function renderCart() {
   const body = document.getElementById('cartBody');
   const footer = document.getElementById('cartFooter');
   const totalEl = document.getElementById('cartTotal');
+  const titleEl = document.getElementById('cartTitleText');
+  const clearBtn = document.getElementById('clearCartBtn');
   if (!body) return;
-  if (cart.length === 0) {
+
+  const isBuyNow = !!buyNowItem;
+  if (titleEl) titleEl.textContent = isBuyNow ? 'Comprar ahora' : 'Tu carrito';
+  if (clearBtn) clearBtn.style.display = isBuyNow ? 'none' : 'flex';
+  const countBadgeEl = document.getElementById('cartCountBadge');
+  if (countBadgeEl) {
+    if (isBuyNow) { countBadgeEl.style.display = 'none'; }
+    else { const n = cart.reduce((s,c)=>s+(c.qty||1),0); countBadgeEl.style.display = n>0?'inline':'none'; countBadgeEl.textContent = n; }
+  }
+
+  const items = isBuyNow ? [buyNowItem] : cart;
+
+  if (!isBuyNow && cart.length === 0) {
     body.innerHTML = `<div class="cart-empty">
       <div class="cart-empty-icon">🛍️</div>
       <p class="cart-empty-title">Tu carrito está vacío</p>
-      <p class="cart-empty-sub">Explora nuestro catálogo y añade tus fragancias favoritas.</p>
+      <p class="cart-empty-sub">Explora nuestro catálogo y añade tus perfumes favoritos.</p>
       <button class="btn-ghost" style="margin-top:0.5rem;" onclick="closeCart()">Seguir comprando</button>
     </div>`;
     if (footer) footer.style.display = 'none';
     return;
   }
-  body.innerHTML = `<ul class="cart-items-list" role="list" aria-label="Artículos en el carrito">
-    ${cart.map(c => {
+
+  body.innerHTML = `<ul class="cart-items-list" role="list" aria-label="${isBuyNow ? 'Producto a comprar' : 'Artículos en el carrito'}">
+    ${items.map(c => {
       // Support sample items
       const isSampleItem = !!c._sampleId;
       const p = isSampleItem
@@ -4182,6 +4250,7 @@ function renderCart() {
       const concDisplay = isSampleItem ? (p.ml||'2') + ' ml · Muestra' : (p.concentration||'');
       const thumb = p.photo ? `<img src="${p.photo}" alt="" loading="lazy"/>` : `<span>${p.emoji||'🌸'}</span>`;
       const subtotal = (parseFloat(p.price||0)*(c.qty||1)).toFixed(2);
+      const qtyFn = isBuyNow ? 'setBuyNowQty' : 'setCartQty';
       return `<li class="cart-item">
         <div class="cart-item-thumb">${thumb}</div>
         <div class="cart-item-info">
@@ -4191,16 +4260,16 @@ function renderCart() {
           <div class="cart-item-price">${subtotal} €</div>
         </div>
         <div class="cart-item-controls">
-          <button class="cart-item-remove" onclick="removeFromCart('${c.id}')" aria-label="Eliminar ${p.name}">
+          ${isBuyNow ? '' : `<button class="cart-item-remove" onclick="removeFromCart('${c.id}')" aria-label="Eliminar ${p.name}">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-          </button>
+          </button>`}
           <div class="qty-controls">
-            <button class="qty-btn" onclick="setCartQty(${c.id},${(c.qty||1)-1})" ${(c.qty||1)<=1?'disabled':''} aria-label="Reducir cantidad">
+            <button class="qty-btn" onclick="${qtyFn}(${c.id},${(c.qty||1)-1})" ${(c.qty||1)<=1?'disabled':''} aria-label="Reducir cantidad">
               <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </button>
             <span class="qty-num" aria-live="polite">${c.qty||1}</span>
-            <button class="qty-btn" onclick="setCartQty(${c.id},${(c.qty||1)+1})" ${(c.qty||1)>=99?'disabled':''} aria-label="Aumentar cantidad">
-              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <button class="qty-btn" onclick="${qtyFn}(${c.id},${(c.qty||1)+1})" ${(c.qty||1)>=99?'disabled':''} aria-label="Aumentar cantidad">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/></svg>
             </button>
           </div>
         </div>
@@ -4208,7 +4277,12 @@ function renderCart() {
     }).join('')}
   </ul>`;
   if (footer) footer.style.display = 'flex';
-  if (totalEl) totalEl.textContent = getCartTotal().toFixed(2) + ' €';
+  if (totalEl) {
+    const totalAmount = isBuyNow
+      ? items.reduce((s,c) => { const p=perfumes.find(x=>x.id===c.id); return s+(p?parseFloat(p.price||0):0)*(c.qty||1); }, 0)
+      : getCartTotal();
+    totalEl.textContent = totalAmount.toFixed(2) + ' €';
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════
